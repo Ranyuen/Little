@@ -1,8 +1,8 @@
 <?php
 
+use Ranyuen\Little\Request;
+use Ranyuen\Little\Response;
 use Ranyuen\Little\Router;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class BasicRouteTest extends PHPUnit_Framework_TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 
+use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
-use Symfony\Component\HttpFoundation\Request;
 
 class GroupRouteTest extends PHPUnit_Framework_TestCase
 {
@@ -79,6 +79,7 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
             });
             $r->error(500, function () { return 'Member Error'; });
         });
+        $r->error(500, function () { return 'All 500 Error'; });
         $r->error(503, function () { return 'All 503 Error'; });
 
         $req = new Request(

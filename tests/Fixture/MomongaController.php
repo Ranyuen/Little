@@ -2,7 +2,7 @@
 namespace Fixture;
 
 use Ranyuen\Little\Router;
-use Symfony\Component\HttpFoundation\Request;
+use Ranyuen\Little\Request;
 
 class MomongaController
 {
@@ -49,9 +49,9 @@ class MomongaController
 
     public function ditest()
     {
-        $this->test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $this->req);
-        $this->test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $this->request);
-        $this->test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $this->q);
+        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->req);
+        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->request);
+        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->q);
         $this->test->assertInstanceOf('Ranyuen\Little\Router', $this->router);
         $this->test->assertInstanceOf('Ranyuen\Little\Router', $this->r);
         $this->test->assertInstanceOf('Fixture\Momonga', $this->args['momonga']);

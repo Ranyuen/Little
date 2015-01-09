@@ -3,8 +3,8 @@ require_once 'tests/Fixture/Momonga.php';
 
 use Fixture\Momonga;
 use Ranyuen\Di\Container;
+use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
-use Symfony\Component\HttpFoundation\Request;
 
 class BasicDiTest extends PHPUnit_Framework_TestCase
 {

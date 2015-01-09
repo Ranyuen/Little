@@ -4,200 +4,65 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2014 Ranyuen
+ * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
+ * Router facade.
  */
 class Router implements HttpKernelInterface
 {
-    /** @var self */
-    private $parent;
-    /** @var array [string $path => self $router] */
-    private $childs = [];
-    /** @var Route[] */
-    private $routes = [];
-    /** @var array */
-    private $errorRoutes = [];
-    /** @var Route */
-    private $currentMap;
+    /** @var RouterService */
+    private $service;
     /** @var Container */
-    private $container;
+    private $c;
 
     /**
-     * @param Container $container
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @param Container $c
      */
-    public function __construct(Container $container = null)
+    public function __construct(Container $c = null)
     {
-        Request::enableHttpMethodParameterOverride();
-        $this->container = $container ? $container : new Container();
+        if (!$c) {
+            $c = new Container();
+        }
+        $this->service = new RouterService($this, $c);
+        $this->c       = $c;
     }
 
-    /**
-     * @return Container
-     */
-    public function getContainer()
+    public function __call($name, $args)
     {
-        return $this->container;
-    }
+        $aliases = [
+            'match' => 'map',
+            'mount' => 'group',
+        ];
+        if (isset($aliases[$name])) {
+            return call_user_func_array([$this, $aliases[$name]], $args);
+        }
+        $httpMethods = ['get', 'post', 'put', 'delete', 'options', 'patch'];
+        if (in_array($name, $httpMethods)) {
+            return call_user_func_array([$this, 'map'], $args)->via($name);
+        }
 
-    /**
-     * @param Container $controller
-     *
-     * @return void
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
+        return call_user_func_array([$this->service, $name], $args);
     }
 
     /**
      * @param string          $path
-     * @param callback|string $controller
+     * @param callable|string $controller
      *
-     * @return this|Response
+     * @return Route
      */
     public function map($path, $controller)
     {
-        $this->currentMap = new Route($this);
-        $this->currentMap->setPath($path);
-        $this->currentMap->setController($controller);
-        array_unshift($this->routes, $this->currentMap);
+        $route = new Route($this->c, $this, $path, $controller);
+        $this->service->addRoute($route);
 
-        return $this;
-    }
-
-    /**
-     * @return this
-     */
-    public function via()
-    {
-        if (!$this->currentMap) {
-            return $this;
-        }
-        $methods = array_map(
-            function ($method) {
-                return strtoupper($method);
-            },
-            func_get_args()
-        );
-        $this->currentMap->addMethods($methods);
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return this
-     */
-    public function name($name)
-    {
-        if (!$this->currentMap) {
-            return $this;
-        }
-        $this->currentMap->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @param string        $path
-     * @param self|callback $router
-     *
-     * @return this
-     */
-    public function group($path, $router)
-    {
-        if (!($router instanceof self)) {
-            $child = new self();
-            $router($child);
-
-            return $this->group($path, $child);
-        }
-        $this->childs[$path] = $router;
-        $router->registerParent($path, $this);
-
-        return $this;
-    }
-
-    /**
-     */
-    public function registerParent($path, Router $router)
-    {
-        $this->parent = $router;
-        foreach ($this->routes as $route) {
-            $route->setPath($path.$route->path);
-        }
-    }
-
-    /**
-     * Run request handler.
-     *
-     * Run metched handler.
-     *     run(Request)
-     * Assign specific route. Ignores which dose the request matches or not.
-     *     run(string $name, Request)
-     *
-     * @return Response
-     */
-    public function run()
-    {
-        if (func_get_arg(0) instanceof Request) {
-            $name = null;
-            $req = func_get_arg(0);
-        } else {
-            list($name, $req) = func_get_args();
-        }
-        if ($res = $this->runAsAlone($req, $name)) {
-            return $res;
-        }
-        foreach ($this->childs as $path => $router) {
-            if ($res = $router->runAsAlone($req, $name)) {
-                return $res;
-            }
-        }
-
-        return $this->error(404, $req);
-    }
-
-    /**
-     */
-    public function runAsAlone(Request $req, $name = null)
-    {
-        if (!$name) {
-            foreach ($this->routes as $route) {
-                if ($res = $route->matchOrRun($req)) {
-                    if ($res instanceof \Exception) {
-                        return $this->error(500, $req, $res);
-                    }
-
-                    return $res;
-                }
-            }
-        } else {
-            foreach ($this->routes as $route) {
-                if ($route->name === $name) {
-                    $res = $route->run($req);
-                    if ($res instanceof \Exception) {
-                        return $this->error(500, $req, $res);
-                    }
-
-                    return $res;
-                }
-            }
-        }
-
-        return;
+        return $route;
     }
 
     /**
@@ -220,148 +85,61 @@ class Router implements HttpKernelInterface
         if ($controller instanceof Request) {
             $req = $controller;
             unset($controller);
-            if ($res = $this->runErrorAsAlone($status, $req, $ex)) {
-                return $res;
-            }
-            if ($this->parent
-                && $res = $this->parent->runErrorAsAlone($status, $req, $ex)) {
-                return $res;
-            }
 
-            return new Response((string) $ex, $status);
+            return $this->service->runError($status, $req, $ex);
         }
-        $this->currentMap = null;
-        $currentMap = new Route($this);
-        $currentMap->setController($controller);
-        $this->errorRoutes[$status] = $currentMap;
+        $this->service->addErrorHandler($status, $controller);
 
         return $this;
     }
 
     /**
-     */
-    public function runErrorAsAlone($status, Request $req, \Exception $ex = null)
-    {
-        if (!isset($this->errorRoutes[$status])) {
-            return;
-        }
-        $res = $this->errorRoutes[$status]->run(
-            $req,
-            [
-                'e'         => $ex,
-                'ex'        => $ex,
-                'err'       => $ex,
-                'error'     => $ex,
-                'exception' => $ex,
-                'Exception' => $ex,
-            ]
-        );
-        if ($res instanceof \Exception) {
-            if (500 === $status) {
-                return new Response((string) $ex, 500);
-            }
-
-            return $this->error(500, $req, $ex);
-        }
-        $res->setStatusCode($status);
-
-        return $res;
-    }
-
-    /**
-     * @param string $class
+     * @param string        $path
+     * @param self|callback $router
      *
      * @return this
      */
-    public function route($class)
+    public function group($path, $router)
     {
-        $class = new \ReflectionClass($class);
-        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $annotation = new RouteAnnotation();
-        $group = $annotation->getGroup($class);
-        if ($group) {
-            $router = new self();
-        } else {
-            $router = $this;
+        if (!($router instanceof self)) {
+            $r = new self($this->c);
+            $router($r);
+
+            return $this->group($path, $r);
         }
-        foreach ($methods as $method) {
-            foreach ($annotation->getRoutes($method) as $route) {
-                list($method, $path) = $route;
-                $router->map(
-                    $path,
-                    "{$class->getName()}::{$method->getName()}"
-                )->via($method);
-            }
-        }
-        if ($group) {
-            $this->group($group, $router);
-        }
+        $this->service->addGroup($path, $router);
 
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * Run request handler.
+     *
+     * Run metched handler.
+     *     run(Request)
+     * Assign specific route. Ignores which dose the request matches or not.
+     *     run(string $name, Request)
+     *
+     * @return Response
+     */
+    public function run()
+    {
+        if (func_get_arg(0) instanceof Request) {
+            $name = null;
+            $req = func_get_arg(0);
+        } else {
+            list($name, $req) = func_get_args();
+        }
+
+        return $this->service->run($name, $req);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-    }
-
-    /**
-     * Alias of map() & via('GET').
-     *
-     * @return this
-     */
-    public function get($path, $controller)
-    {
-        return $this->map($path, $controller)->via('GET');
-    }
-
-    /**
-     * Alias of map() & via('POST').
-     *
-     * @return this
-     */
-    public function post($path, $controller)
-    {
-        return $this->map($path, $controller)->via('POST');
-    }
-
-    /**
-     * Alias of map() & via('PUT').
-     *
-     * @return this
-     */
-    public function put($path, $controller)
-    {
-        return $this->map($path, $controller)->via('PUT');
-    }
-
-    /**
-     * Alias of map() & via('DELETE').
-     *
-     * @return this
-     */
-    public function delete($path, $controller)
-    {
-        return $this->map($path, $controller)->via('DELETE');
-    }
-
-    /**
-     * Alias of map() & via('OPTIONS').
-     *
-     * @return this
-     */
-    public function options($path, $controller)
-    {
-        return $this->map($path, $controller)->via('OPTIONS');
-    }
-
-    /**
-     * Alias of map() & via('PATCH').
-     *
-     * @return this
-     */
-    public function patch($path, $controller)
-    {
-        return $this->map($path, $controller)->via('PATCH');
     }
 }

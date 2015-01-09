@@ -4,182 +4,92 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2014 Ranyuen
+ * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * Route facade.
  */
 class Route
 {
-    /** @var string */
-    public $name;
-    /** @var string */
-    public $path;
-
+    /** @var RouteService */
+    private $service;
     /** @var Router */
     private $router;
-    /** @var string */
-    private $pathRegex;
-    /** @var array */
-    private $methods = [];
-    /** @var \ReflectionFunctionAbstract */
-    private $controller;
 
-    public function __construct(Router $router)
+    public function __construct(Container $c, Router $router, $path, $controller)
     {
         $this->router = $router;
+        $this->service = new RouteService($c, $this, $controller);
+        $this->service->setPath($path);
     }
 
-    public function setPath($path)
+    public function __call($name, $args)
     {
-        $this->path = $path;
-        $compiledPath = (new Compiler())->compile($path);
-        $this->pathRegex = $compiledPath;
-    }
+        $aliases = [
+            'bind'       => 'name',
+            'conditions' => 'assert',
+            'method'     => 'via',
+        ];
+        if (isset($aliases[$name])) {
+            return call_user_func_array([$this, $aliases[$name]], $args);
+        }
+        $routerMethods = [
+            'map', 'error', 'group', 'run', 'handle',
+            'match', 'mount',
+            'get', 'post', 'put', 'delete', 'options', 'patch',
+        ];
+        if (in_array($name, $routerMethods)) {
+            return call_user_func_array([$this->router, $name], $args);
+        }
 
-    public function setController($controller)
-    {
-        if (!is_callable($controller)) {
-            list($class, $method) = explode('@', $controller);
-            $this->controller = new \ReflectionMethod($class, $method);
-        } else {
-            $this->controller = new \ReflectionFunction($controller);
-        }
-    }
-
-    public function addMethods($methods)
-    {
-        if (in_array('GET', $methods)) {
-            $methods[] = 'HEAD';
-        }
-        $this->methods = array_unique(array_merge($this->methods, $methods), SORT_REGULAR);
-    }
-
-    /**
-     * @param Request $req
-     * @param array   $vars
-     *
-     * @return Response|Exception|false
-     */
-    public function matchOrRun(Request $req, $vars = [])
-    {
-        $method = $req->getMethod();
-        if ('HEAD' === $method) {
-            $method = 'GET';
-        }
-        if (!in_array($method, $this->methods)) {
-            return false;
-        }
-        if (!preg_match($this->pathRegex, $req->getRequestUri(), $matches)) {
-            return false;
-        }
-        $vars = array_merge($vars, $matches);
-
-        return $this->run($req, $vars);
+        return call_user_func_array([$this->service, $name], $args);
     }
 
     /**
-     * @param Request $req
-     * @param array   $vars
+     * via('GET', 'POST') or via(['GET', 'POST']).
      *
-     * @return Response|Exception
+     * @return this
      */
-    public function run(Request $req, $vars = [])
+    public function via()
     {
-        $vars = array_merge(
-            [
-                'router'                                   => $this->router,
-                'Ranyuen\Little\Router'                    => $this->router,
-                'req'                                      => $req,
-                'request'                                  => $req,
-                'Symfony\Component\HttpFoundation\Request' => $req,
-            ],
-            $vars
-        );
-        $args = [];
-        foreach ($this->controller->getParameters() as $param) {
-            $args[] = $this->getVar($param, $req, $vars);
-        }
-        if ($this->controller instanceof \ReflectionMethod) {
-            $obj = $this->router
-                ->getContainer()
-                ->newInstance($this->controller->getDeclaringClass()->getName());
-            $this->createTmpContainer($vars)->inject($obj);
-            try {
-                $res = $this->controller->invokeArgs($obj, $args);
-            } catch (\Exception $ex) {
-                return $ex;
-            }
+        if (is_array(func_get_arg(0))) {
+            $methods = func_get_arg(0);
         } else {
-            try {
-                $res = $this->controller->invokeArgs($args);
-            } catch (\Exception $ex) {
-                return $ex;
-            }
+            $methods = func_get_args();
         }
-        $res = $this->toResponse($res);
-        if ('HEAD' === $req->getMethod()) {
-            $res->setContent('');
+        foreach ($methods as $method) {
+            $this->service->addMethod(strtoupper($method));
         }
 
-        return $res;
+        return $this;
     }
 
-    private function getVar(\ReflectionParameter $param, Request $req, array $vars)
+    /**
+     * @param string $name
+     *
+     * @return this
+     */
+    public function name($name)
     {
-        $container = $this->router->getContainer();
-        $name = $param->getName();
-        if ($type = $param->getClass()) {
-            $type = $type->getName();
-        }
-        if (isset($vars[$type])) {
-            return $vars[$type];
-        }
-        if ($var = $container->getByType($type)) {
-            return $var;
-        }
-        if (isset($vars[$name])) {
-            return $vars[$name];
-        }
-        if ($var = $req->get($name)) {
-            return $var;
-        }
-        if (isset($container[$name])) {
-            return $container[$name];
-        }
+        $this->router->registerNamedRoute($name, $this);
 
-        return;
+        return $this;
     }
 
-    private function createTmpContainer($vars)
+    /**
+     * @param callable|string $cond
+     *
+     * @return this
+     */
+    public function assert($cond)
     {
-        $c = new Container();
-        foreach ($vars as $name => $var) {
-            if (false === strpos($name, '\\')) {
-                $c[$name] = $var;
-            } else {
-                $c->bind($name, uniqid('route_', true), $var);
-            }
-        }
+        $this->service->addCondition($cond);
 
-        return $c;
-    }
-
-    private function toResponse($value)
-    {
-        if ($value instanceof Response) {
-            return $value;
-        }
-        if (is_int($value)) {
-            return new Response('', $value);
-        }
-
-        return new Response((string) $value, 200);
+        return $this;
     }
 }

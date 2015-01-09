@@ -4,7 +4,7 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2014 Ranyuen
+ * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
 namespace Ranyuen\Little;
@@ -17,6 +17,8 @@ use Symfony\Component\Routing\RouteCompiler;
 class Compiler
 {
     /**
+     * Compile the route path DSL to a regex.
+     *
      * @param string $path
      *
      * @return string

@@ -4,13 +4,11 @@ require_once 'tests/Fixture/MomongaController.php';
 
 use Fixture\Momonga;
 use Ranyuen\Di\Container;
+use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
-use Symfony\Component\HttpFoundation\Request;
 
 class ControllerRouteTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     */
     public function testRouteToController()
     {
         $r = new Router();
@@ -42,8 +40,6 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals((string) $ex, $res->getContent());
     }
 
-    /**
-     */
     public function testControllerDi()
     {
         $c = new Container(['test' => $this]);
@@ -63,8 +59,6 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Momonga ditest', $res->getContent());
     }
 
-    /**
-     */
     public function testControllerArgs()
     {
         $c = new Container(['test' => $this]);
