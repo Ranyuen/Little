@@ -19,31 +19,37 @@ class RequestedRoute
     private $route;
     /** @var Request */
     private $req;
+    /** @var array */
+    private $pathVars;
 
     /**
      * @param Router  $router
      * @param Route   $route
      * @param Request $req
+     * @param array   $pathVars
      */
-    public function __construct(Router $router, Route $route, Request $req)
+    public function __construct(Router $router, Route $route, Request $req, array $pathVars)
     {
-        $this->router = $router;
-        $this->route  = $route;
-        $this->req    = $req;
+        $this->router   = $router;
+        $this->route    = $route;
+        $this->req      = $req;
+        $this->pathVars = $pathVars;
     }
 
     /**
-     * @param array $var
+     * @param array $vars
      *
      * @return mixed
      */
-    public function response(array $var = [])
+    public function response(array $vars = [])
     {
-        return $this->route->response($this->req, $var);
+        $vars = array_merge($this->pathVars, $vars);
+
+        return $this->route->response($this->req, $vars);
     }
 
     /**
-     * @param int $status
+     * @param int        $status
      * @param \Exception $ex
      *
      * @return Response

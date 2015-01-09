@@ -20,37 +20,30 @@ class RouteService
 {
     /** @var Container */
     private $c;
+    /** @var Router */
+    private $router;
     /** @var Route */
     private $facade;
     /** @var mixed */
     private $controller;
     /** @var string */
     private $rawPath;
-    /** @var string */
-    private $compiledPath;
     /** @var string[] */
     private $methods = [];
     /** @var array */
     private $conditions = [];
 
-    public function __construct(Container $c, Route $facade, $controller)
+    public function __construct(Container $c, Router $router, Route $facade, $controller)
     {
         $this->c          = $c;
+        $this->router     = $router;
         $this->facade     = $facade;
         $this->controller = $controller;
     }
 
     public function setPath($path)
     {
-        $this->compiledPath = (new Compiler())->compile($path);
-        $this->rawPath      = $path;
-    }
-
-    public function addPrefix($path)
-    {
-        $path = $path.$this->rawPath;
-        $this->compiledPath = (new Compiler())->compile($path);
-        $this->rawPath      = $path;
+        $this->rawPath = $path;
     }
 
     public function addMethod($method)
@@ -71,15 +64,17 @@ class RouteService
 
     /**
      * @param Request $req
+     * @param string  $prefix
      *
      * @return Route|null
      */
-    public function matchRequest(Request $req)
+    public function matchRequest(Request $req, $prefix = '')
     {
         if (!in_array($req->getMethod(), $this->methods)) {
             return;
         }
-        if (!preg_match($this->compiledPath, $req->getRequestUri(), $matches)) {
+        $compiledPath = (new Compiler())->compile($prefix.$this->rawPath);
+        if (!preg_match($compiledPath, $req->getRequestUri(), $matches)) {
             return;
         }
         $set = new ContainerSet();
@@ -101,7 +96,7 @@ class RouteService
             }
         }
 
-        return $this->facade;
+        return new RequestedRoute($this->router, $this->facade, $req, $matches);
     }
 
     /**
@@ -110,12 +105,10 @@ class RouteService
     public function response(Request $req, array $vars = [])
     {
         $matches = [];
-        preg_match($this->compiledPath, $req->getRequestUri(), $matches);
         $set = new ContainerSet();
         $set->addContainer($this->c);
         $set->addRequest($req);
         $set->addArray($vars);
-        $set->addArray($matches);
         $injector = new FunctionInjector($set);
         $injector->registerFunc($this->controller);
 

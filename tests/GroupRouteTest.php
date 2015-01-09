@@ -102,4 +102,28 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(503, $res->getStatusCode());
         $this->assertEquals('All 503 Error', $res->getContent());
     }
+
+    public function testSeparateRouter()
+    {
+        $child = new Router();
+        $child->get('/', function () { return ''; });
+        $r = new Router();
+        $r->group('/user', $child);
+
+        $req = Request::create('/user/');
+        $res = $r->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $req = Request::create('/');
+        $res = $child->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $req = Request::create('/user/');
+        $res = $child->run($req);
+        $this->assertEquals(404, $res->getStatusCode());
+
+        $req = Request::create('/');
+        $res = $r->run($req);
+        $this->assertEquals(404, $res->getStatusCode());
+    }
 }

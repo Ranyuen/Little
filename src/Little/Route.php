@@ -24,7 +24,7 @@ class Route
     public function __construct(Container $c, Router $router, $path, $controller)
     {
         $this->router = $router;
-        $this->service = new RouteService($c, $this, $controller);
+        $this->service = new RouteService($c, $router, $this, $controller);
         $this->service->setPath($path);
     }
 

@@ -64,20 +64,17 @@ class RouterService
         if (in_array($router, $this->childs)) {
             return;
         }
-        $this->childs[] = $router;
+        $this->childs[$path] = $router;
         $router->registerParent($path, $this->facade);
     }
 
     public function registerParent($path, Router $router)
     {
         $this->parent = $router;
-        foreach ($this->routes as $route) {
-            $route->addPrefix($path);
-        }
     }
 
     /**
-     * @param string $name
+     * @param string  $name
      * @param Request $req
      *
      * @return Response
@@ -111,34 +108,35 @@ class RouterService
     }
 
     /**
-     * @param string $name
+     * @param string  $name
      * @param Request $req
+     * @param string  $prefix
      *
      * @return RequestedRoute|null
      */
-    public function findMatchedRoute($name, Request $req)
+    public function findMatchedRoute($name, Request $req, $prefix = '')
     {
         if ($name) {
             if (isset($this->namedRoutes[$name])) {
-                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req);
+                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, []);
             }
         } else {
             foreach ($this->routes as $route) {
-                if ($route = $route->matchRequest($req)) {
-                    return new RequestedRoute($this->facade, $route, $req);
+                if ($route = $route->matchRequest($req, $prefix)) {
+                    return $route;
                 }
             }
         }
-        foreach ($this->childs as $child) {
-            if ($route = $child->findMatchedRoute($name, $req)) {
+        foreach ($this->childs as $path => $child) {
+            if ($route = $child->findMatchedRoute($name, $req, $prefix.$path)) {
                 return $route;
             }
         }
     }
 
     /**
-     * @param int $status
-     * @param Request $req
+     * @param int        $status
+     * @param Request    $req
      * @param \Exception $ex
      *
      * @return Response
@@ -196,8 +194,9 @@ class RouterService
             return $this->errorHandlers[$status];
         }
         if (!$this->parent) {
-            return null;
+            return;
         }
+
         return $this->parent->findErrorHandler($status);
     }
 

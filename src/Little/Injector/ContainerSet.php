@@ -59,20 +59,21 @@ class ContainerSet implements \ArrayAccess
 
     public function newInstance($class)
     {
-         $obj = $this->containers[0]->newInstance($class);
-         foreach (array_slice($this->containers, 1) as $c) {
-             $c->inject($obj);
-         }
-         $array = new Container();
-         foreach ($this->array as $k => $v) {
-             if (false !== strpos($k, '\\')) {
-                 $array->bind($k, $k, $v);
-             } else {
-                 $array[$k] = $v;
-             }
-         }
-         $array->inject($obj);
-         return $obj;
+        $obj = $this->containers[0]->newInstance($class);
+        foreach (array_slice($this->containers, 1) as $c) {
+            $c->inject($obj);
+        }
+        $c = new Container();
+        foreach ($this->array as $k => $v) {
+            if (false !== strpos($k, '\\')) {
+                $c->bind($k, $k, $v);
+            } else {
+                $c[$k] = $v;
+            }
+        }
+        $c->inject($obj);
+
+        return $obj;
     }
 
     public function getByType($class)
