@@ -13,12 +13,7 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->get('/', 'Fixture\MomongaController@index');
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('Momonga index', $res->getContent());
@@ -28,12 +23,7 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->error(500, 'Fixture\MomongaController@error500');
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $ex = new \Exception('Some Error');
         $res = $r->error(500, $req, $ex);
         $this->assertEquals(500, $res->getStatusCode());
@@ -48,12 +38,7 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
         });
         $r = new Router($c);
         $r->get('/', 'Fixture\MomongaController@ditest');
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('Momonga ditest', $res->getContent());
@@ -67,12 +52,7 @@ class ControllerRouteTest extends PHPUnit_Framework_TestCase
         });
         $r = new Router($c);
         $r->get('/', 'Fixture\MomongaController@argtest');
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('Momonga argtest', $res->getContent());

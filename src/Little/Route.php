@@ -25,7 +25,7 @@ class Route
     {
         $this->router = $router;
         $this->service = new RouteService($c, $router, $this, $controller);
-        $this->service->setPath($path);
+        $this->service->rawPath = $path;
     }
 
     public function __call($name, $args)

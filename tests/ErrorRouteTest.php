@@ -17,12 +17,7 @@ class ErrorRouteTest extends PHPUnit_Framework_TestCase
         $r->error(500, function ($ex) {
             return new Response((string) $ex, 500);
         });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->error(404, $req);
         $this->assertEquals(404, $res->getStatusCode());
         $this->assertEquals('Not Found', $res->getContent());
@@ -52,12 +47,7 @@ class ErrorRouteTest extends PHPUnit_Framework_TestCase
                 return new Response('', 500);
             }
         );
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->error(500, $req, $someError);
         $this->assertEquals(500, $res->getStatusCode());
     }
@@ -68,12 +58,7 @@ class ErrorRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->error(404, function () { return 'Not Found'; });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
         $this->assertEquals('Not Found', $res->getContent());
@@ -94,12 +79,7 @@ class ErrorRouteTest extends PHPUnit_Framework_TestCase
 
             return 'Internal Server Error';
         });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/raise']
-        );
+        $req = Request::create('/raise');
         $res = $r->run($req);
         $this->assertEquals(500, $res->getStatusCode());
         $this->assertEquals('Internal Server Error', $res->getContent());

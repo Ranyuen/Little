@@ -18,6 +18,9 @@ use Ranyuen\Little\Injector\FunctionInjector;
  */
 class RouteService
 {
+    /** @var string */
+    public $rawPath;
+
     /** @var Container */
     private $c;
     /** @var Router */
@@ -26,8 +29,6 @@ class RouteService
     private $facade;
     /** @var mixed */
     private $controller;
-    /** @var string */
-    private $rawPath;
     /** @var string[] */
     private $methods = [];
     /** @var array */
@@ -39,11 +40,6 @@ class RouteService
         $this->router     = $router;
         $this->facade     = $facade;
         $this->controller = $controller;
-    }
-
-    public function setPath($path)
-    {
-        $this->rawPath = $path;
     }
 
     public function addMethod($method)
@@ -74,7 +70,7 @@ class RouteService
             return;
         }
         $compiledPath = (new Compiler())->compile($prefix.$this->rawPath);
-        if (!preg_match($compiledPath, $req->getRequestUri(), $matches)) {
+        if (!preg_match($compiledPath, $req->getPathInfo(), $matches)) {
             return;
         }
         $set = new ContainerSet();

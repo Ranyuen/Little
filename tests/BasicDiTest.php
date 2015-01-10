@@ -15,12 +15,7 @@ class BasicDiTest extends PHPUnit_Framework_TestCase
         $c = new Container(['momonga' => 'mOmonga']);
         $r = new Router($c);
         $r->get('/', function ($momonga) { return $momonga; });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('mOmonga', $res->getContent());
@@ -41,12 +36,7 @@ class BasicDiTest extends PHPUnit_Framework_TestCase
 
             return '';
         });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
     }

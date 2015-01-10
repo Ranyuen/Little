@@ -21,22 +21,12 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->get('/basic', function () { return new Response('basic'); });
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('basic', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/nonbasic']
-        );
+        $req = Request::create('/nonbasic');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
     }
@@ -53,66 +43,31 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r->delete('/basic', function () { return new Response('DELETE'); });
         $r->options('/basic', function () { return new Response('OPTIONS'); });
         $r->patch('/basic', function () { return new Response('PATCH'); });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('GET', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'HEAD', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'HEAD');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'POST');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('POST', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'PUT', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'PUT');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('PUT', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'DELETE', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'DELETE');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('DELETE', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'OPTIONS', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'OPTIONS');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('OPTIONS', $res->getContent());
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'PATCH', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'PATCH');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('PATCH', $res->getContent());
@@ -127,59 +82,29 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r->map('/', function () { return new Response('via'); })
             ->via('POST', 'PUT', 'PATCH');
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/', 'POST');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('via', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'PUT', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/', 'PUT');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('via', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'DELETE', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/', 'DELETE');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'OPTIONS', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/', 'OPTIONS');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'PATCH', 'REQUEST_URI' => '/']
-        );
+        $req = Request::create('/', 'PATCH');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('via', $res->getContent());
@@ -193,12 +118,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->get('/named', function () { return new Response('named'); })
             ->name('named');
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/noname']
-        );
+        $req = Request::create('/noname');
 
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
@@ -221,31 +141,16 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->patch('/override', function () { return new Response('PATCH'); });
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/override']
-        );
+        $req = Request::create('/override', 'POST');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/override', 'HTTP_X-HTTP-Method-Override' => 'PATCH']
-        );
+        $req = Request::create('/override', 'POST', [], [], [], ['HTTP_X-HTTP-Method-Override' => 'PATCH']);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('PATCH', $res->getContent());
 
-        $req = new Request(
-            [],
-            ['_method' => 'PATCH'],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/override']
-        );
+        $req = Request::create('/override', 'POST', ['_method' => 'PATCH']);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('PATCH', $res->getContent());
@@ -266,9 +171,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $test = $this;
         $r = new Router();
         $r->map('/args', function ($req, $request, Request $q, $router, Router $r) use ($test) {
-            $test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $req);
-            $test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $request);
-            $test->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $q);
+            $test->assertInstanceOf('Ranyuen\Little\Request', $req);
+            $test->assertInstanceOf('Ranyuen\Little\Request', $request);
+            $test->assertInstanceOf('Ranyuen\Little\Request', $q);
             $test->assertInstanceOf('Ranyuen\Little\Router', $router);
             $test->assertInstanceOf('Ranyuen\Little\Router', $r);
             $test->assertEquals('mOmonga', $req->get('name'));
@@ -278,22 +183,12 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
             return new Response('args');
         })->via('GET', 'POST');
 
-        $req = new Request(
-            ['name' => 'mOmonga'],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/args']
-        );
+        $req = Request::create('/args?name=mOmonga');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('args', $res->getContent());
 
-        $req = new Request(
-            [],
-            ['name' => 'mOmonga'],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/args']
-        );
+        $req = Request::create('/args', 'POST', ['name' => 'mOmonga']);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('args', $res->getContent());
@@ -308,12 +203,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $r->put('/basic/{id}', function ($id, $name) {
             return new Response("$name $id");
         });
-        $req = new Request(
-            [],
-            ['id' => 41, 'name' => 'mOmonga'],
-            [], [], [],
-            ['REQUEST_METHOD' => 'PUT', 'REQUEST_URI' => '/basic/42']
-        );
+        $req = Request::create('/basic/42', 'PUT', ['id' => 41, 'name' => 'mOmonga']);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('mOmonga 42', $res->getContent());
@@ -326,12 +216,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->delete('/basic', function () { return 'mOmonga'; });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'DELETE', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'DELETE');
         $res = $r->run($req);
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $res);
         $this->assertEquals(200, $res->getStatusCode());
@@ -339,12 +224,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
 
         $r = new Router();
         $r->delete('/basic', function () { return 404; });
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'DELETE', 'REQUEST_URI' => '/basic']
-        );
+        $req = Request::create('/basic', 'DELETE');
         $res = $r->run($req);
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $res);
         $this->assertEquals(404, $res->getStatusCode());

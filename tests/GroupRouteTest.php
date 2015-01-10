@@ -15,22 +15,12 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->group('/user', $child);
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/user/42']
-        );
+        $req = Request::create('/user/42');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('GET 42', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/user/42']
-        );
+        $req = Request::create('/user/42', 'POST');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('POST 42', $res->getContent());
@@ -46,22 +36,12 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
             $r->post('/{id}', function ($id) { return "POST $id"; });
         });
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/user/42']
-        );
+        $req = Request::create('/user/42');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('GET 42', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/user/42']
-        );
+        $req = Request::create('/user/42', 'POST');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('POST 42', $res->getContent());
@@ -82,22 +62,12 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
         $r->error(500, function () { return 'All 500 Error'; });
         $r->error(503, function () { return 'All 503 Error'; });
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/member/']
-        );
+        $req = Request::create('/member/');
         $res = $r->run($req);
         $this->assertEquals(500, $res->getStatusCode());
         $this->assertEquals('Member Error', $res->getContent());
 
-        $req = new Request(
-            [],
-            [],
-            [], [], [],
-            ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/member/503']
-        );
+        $req = Request::create('/member/503');
         $res = $r->run($req);
         $this->assertEquals(503, $res->getStatusCode());
         $this->assertEquals('All 503 Error', $res->getContent());
