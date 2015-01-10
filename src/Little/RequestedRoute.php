@@ -9,6 +9,8 @@
  */
 namespace Ranyuen\Little;
 
+use Ranyuen\Little\Injector\ContainerSet;
+
 /**
  * HTTP Requested Route.
  *
@@ -22,21 +24,25 @@ class RequestedRoute
     private $route;
     /** @var Request */
     private $req;
-    /** @var array */
-    private $pathVars;
+    /** @var ContainerSet */
+    private $c;
 
     /**
-     * @param Router  $router   The router that has the route.
-     * @param Route   $route    Matched route.
-     * @param Request $req      HTTP Request.
-     * @param array   $pathVars Values from the URI path.
+     * @param Router       $router The router that has the route.
+     * @param Route        $route  Matched route.
+     * @param Request      $req    HTTP Request.
+     * @param ContainerSet $c      DI container.
      */
-    public function __construct(Router $router, Route $route, Request $req, array $pathVars)
+    public function __construct(Router $router, Route $route, Request $req, ContainerSet $c = null)
     {
-        $this->router   = $router;
-        $this->route    = $route;
-        $this->req      = $req;
-        $this->pathVars = $pathVars;
+        if (!$c) {
+            $c = new ContainerSet();
+            $c->addRequest($req);
+        }
+        $this->router = $router;
+        $this->route  = $route;
+        $this->req    = $req;
+        $this->c      = $c;
     }
 
     /**
@@ -48,9 +54,9 @@ class RequestedRoute
      */
     public function response(array $vars = [])
     {
-        $vars = array_merge($this->pathVars, $vars);
+        $this->c->addArray($vars);
 
-        return $this->route->response($this->req, $vars);
+        return $this->route->response($this->c);
     }
 
     /**

@@ -109,22 +109,17 @@ class RouteService
             }
         }
 
-        return new RequestedRoute($this->router, $this->facade, $req, $matches);
+        return new RequestedRoute($this->router, $this->facade, $req, $set);
     }
 
     /**
-     * @param Request $req  HTTP request.
-     * @param array   $vars Extra values.
+     * @param ContainerSet $c DI container.
      *
      * @return mixed
      */
-    public function response(Request $req, array $vars = [])
+    public function response(ContainerSet $c)
     {
-        $set = new ContainerSet();
-        $set->addContainer($this->c);
-        $set->addRequest($req);
-        $set->addArray($vars);
-        $injector = new FunctionInjector($set);
+        $injector = new FunctionInjector($c);
         $injector->registerFunc($this->controller);
 
         return $injector->invoke();

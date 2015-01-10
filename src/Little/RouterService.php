@@ -109,16 +109,7 @@ class RouterService
     {
         if ($route = $this->findMatchedRoute($name, $req)) {
             try {
-                $res = $route->response(
-                    [
-                        'req'                                      => $req,
-                        'request'                                  => $req,
-                        'Ranyuen\Little\Request'                   => $req,
-                        'Symfony\Component\HttpFoundation\Request' => $req,
-                        'router'                                   => $this->facade,
-                        'Ranyuen\Little\Router'                    => $this->facade,
-                    ]
-                );
+                $res = $route->response();
             } catch (\Exception $ex) {
                 return $route->runError(500, $ex);
             }
@@ -144,7 +135,7 @@ class RouterService
     {
         if ($name) {
             if (isset($this->namedRoutes[$name])) {
-                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, []);
+                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req);
             }
         } else {
             foreach ($this->routes as $route) {
