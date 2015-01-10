@@ -33,12 +33,8 @@ class RequestedRoute
      * @param Request      $req    HTTP Request.
      * @param ContainerSet $c      DI container.
      */
-    public function __construct(Router $router, Route $route, Request $req, ContainerSet $c = null)
+    public function __construct(Router $router, Route $route, Request $req, ContainerSet $c)
     {
-        if (!$c) {
-            $c = new ContainerSet();
-            $c->addRequest($req);
-        }
         $this->router = $router;
         $this->route  = $route;
         $this->req    = $req;

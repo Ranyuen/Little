@@ -135,7 +135,11 @@ class RouterService
     {
         if ($name) {
             if (isset($this->namedRoutes[$name])) {
-                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req);
+                $set = new ContainerSet();
+                $set->addContainer($this->c);
+                $set->addRequest($req);
+
+                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, $set);
             }
         } else {
             foreach ($this->routes as $route) {
