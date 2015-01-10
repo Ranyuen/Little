@@ -30,7 +30,7 @@ class FunctionInjector
      *
      * @return bool
      */
-    private static function isRegex($str)
+    public static function isRegex($str)
     {
         if (!is_string($str)) {
             return false;

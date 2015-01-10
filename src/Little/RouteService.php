@@ -65,14 +65,13 @@ class RouteService
     }
 
     /**
-     * @param string $varName Variable name.
-     * @param mixed  $cond    Invokable.
+     * @param RouteCondition $cond Condition.
      *
      * @return void
      */
-    public function addCondition($varName, $cond)
+    public function addCondition(RouteCondition $cond)
     {
-        $this->conditions[$varName] = $cond;
+        $this->conditions[] = $cond;
     }
 
     /**
@@ -93,18 +92,19 @@ class RouteService
         $set = new ContainerSet();
         $set->addContainer($this->c);
         $set->addRequest($req);
+        $set->addArray(
+            [
+                'req'                                      => $req,
+                'request'                                  => $req,
+                'Ranyuen\Little\Request'                   => $req,
+                'Symfony\Component\HttpFoundation\Request' => $req,
+                'router'                                   => $this->router,
+                'Ranyuen\Little\Router'                    => $this->router,
+            ]
+        );
         $set->addArray($matches);
-        $injector = new FunctionInjector($set);
-        foreach ($this->conditions as $varName => $cond) {
-            if (!isset($set[$varName])) {
-                return;
-            }
-            $injector->registerFunc($cond);
-            try {
-                if (!$injector->invoke($set[$varName])) {
-                    return;
-                }
-            } catch (\Exception $ex) { // This exception must be ignored.
+        foreach ($this->conditions as $cond) {
+            if (!$cond->isMatch($set)) {
                 return;
             }
         }

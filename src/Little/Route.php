@@ -88,12 +88,21 @@ class Route
     }
 
     /**
-     * @param callable|string $cond Condition.
+     * assert('name', 'mOmonga')
+     * or assert('name', '/\A[A-Z]/')
+     * or assert(function ($name) { return $name === 'mOmonga'; })
      *
      * @return this
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function assert($cond)
+    public function assert()
     {
+        if (1 === func_num_args()) {
+            $cond = RouteCondition::createFromInvokable(func_get_arg(0));
+        } else {
+            $cond = RouteCondition::createFromPattern(func_get_arg(0), func_get_arg(1));
+        }
         $this->service->addCondition($cond);
 
         return $this;
