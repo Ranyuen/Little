@@ -10,6 +10,9 @@
 namespace Ranyuen\Little;
 
 /**
+ * HTTP Requested Route.
+ *
+ * DCI roled Route :)
  */
 class RequestedRoute
 {
@@ -23,10 +26,10 @@ class RequestedRoute
     private $pathVars;
 
     /**
-     * @param Router  $router
-     * @param Route   $route
-     * @param Request $req
-     * @param array   $pathVars
+     * @param Router  $router   The router that has the route.
+     * @param Route   $route    Matched route.
+     * @param Request $req      HTTP Request.
+     * @param array   $pathVars Values from the URI path.
      */
     public function __construct(Router $router, Route $route, Request $req, array $pathVars)
     {
@@ -37,7 +40,9 @@ class RequestedRoute
     }
 
     /**
-     * @param array $vars
+     * Get a response.
+     *
+     * @param array $vars Extra values.
      *
      * @return mixed
      */
@@ -49,8 +54,10 @@ class RequestedRoute
     }
 
     /**
-     * @param int        $status
-     * @param \Exception $ex
+     * Get an error response.
+     *
+     * @param int        $status HTTP status code.
+     * @param \Exception $ex     Exception.
      *
      * @return Response
      */

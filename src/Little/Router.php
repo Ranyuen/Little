@@ -23,7 +23,7 @@ class Router implements HttpKernelInterface
     private $c;
 
     /**
-     * @param Container $c
+     * @param Container $c DI container.
      */
     public function __construct(Container $c = null)
     {
@@ -52,8 +52,8 @@ class Router implements HttpKernelInterface
     }
 
     /**
-     * @param string          $path
-     * @param callable|string $controller
+     * @param string $path       Path DSL.
+     * @param mixed  $controller Invokable.
      *
      * @return Route
      */
@@ -74,9 +74,9 @@ class Router implements HttpKernelInterface
      *     error(int 404, Request)
      *     error(int 500, Request, Exception)
      *
-     * @param int                     $status
-     * @param callable|string|Request $controller
-     * @param Exception               $ex
+     * @param int                     $status     HTTP status code.
+     * @param callable|string|Request $controller Error controller.
+     * @param Exception               $ex         Exception.
      *
      * @return this|Response
      */
@@ -94,8 +94,8 @@ class Router implements HttpKernelInterface
     }
 
     /**
-     * @param string        $path
-     * @param self|callback $router
+     * @param string        $path   Path DSL.
+     * @param self|callback $router Child router, or child router configuration.
      *
      * @return this
      */
@@ -135,9 +135,22 @@ class Router implements HttpKernelInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Handles a Request to convert it to a Response.
+     *
+     * When $catch is true, the implementation must catch all exceptions
+     * and do its best to convert them to a Response instance.
+     *
+     * @param Request $request A Request instance
+     * @param int     $type    The type of the request
+     *                         (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
+     * @param bool    $catch   Whether to catch exceptions or not
+     *
+     * @return Response A Response instance
+     *
+     * @throws \Exception When an Exception occurs during processing
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {

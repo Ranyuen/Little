@@ -21,6 +21,12 @@ class Route
     /** @var Router */
     private $router;
 
+    /**
+     * @param Container $c          DI container.
+     * @param Router    $router     Owner of this route.
+     * @param string    $path       Path DSL.
+     * @param mixed     $controller Invokable.
+     */
     public function __construct(Container $c, Router $router, $path, $controller)
     {
         $this->router = $router;
@@ -70,19 +76,19 @@ class Route
     }
 
     /**
-     * @param string $name
+     * @param string $name Name.
      *
      * @return this
      */
     public function name($name)
     {
-        $this->router->registerNamedRoute($name, $this);
+        $this->router->addRoute($this, $name);
 
         return $this;
     }
 
     /**
-     * @param callable|string $cond
+     * @param callable|string $cond Condition.
      *
      * @return this
      */

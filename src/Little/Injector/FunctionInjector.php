@@ -11,6 +11,9 @@ namespace Ranyuen\Little\Injector;
 
 use Ranyuen\Di\Container;
 
+/**
+ * Inject to callables' args.
+ */
 class FunctionInjector
 {
     /** @var ContainerSet */
@@ -20,6 +23,13 @@ class FunctionInjector
     /** @var ReflectionParameter[] */
     private $params = [];
 
+    /**
+     * Detect the string is a preg expression or not.
+     *
+     * @param string $str Some string.
+     *
+     * @return bool
+     */
     private static function isRegex($str)
     {
         if (!is_string($str)) {
@@ -42,6 +52,13 @@ class FunctionInjector
         return !!preg_match('/'.preg_quote($delimiter, '/').'[imsxeADSUXJu]*$/', $str);
     }
 
+    /**
+     * @param ContainerSet                                $set  Set of containers.
+     * @param string|callable|\ReflectionFunctionAbstract $func Invokable.
+     * @param object                                      $obj  This of the method.
+     *
+     * @return void
+     */
     public function __construct(ContainerSet $set, $func = null, $obj = null)
     {
         $this->container = $set;
@@ -51,7 +68,9 @@ class FunctionInjector
     }
 
     /**
-     * @param string|callable|\ReflectionFunctionAbstract $func
+     * Register the invokable.
+     *
+     * @param string|callable|\ReflectionFunctionAbstract $func Invokable.
      * @param object                                      $obj  This of the method.
      *
      * @return this
@@ -84,7 +103,9 @@ class FunctionInjector
     }
 
     /**
-     * @param array $args
+     * Invoke the registered invokable..
+     *
+     * @param array $args Args.
      *
      * @return mixed
      *
@@ -106,7 +127,8 @@ class FunctionInjector
     {
         $this->invocation = $func;
         if ($func instanceof \Closure
-            || (is_string($func) && function_exists($func))) {
+            || (is_string($func) && function_exists($func))
+        ) {
             $this->params = (new \ReflectionFunction($func))->getParameters();
         } elseif (is_array($func)) {
             list($class, $method) = $func;
@@ -125,7 +147,9 @@ class FunctionInjector
         $this->invocation = function () use ($obj, $class, $method) {
             if (!is_object($obj)) {
                 if ($obj = $this->container[$class]) {
+                    null;
                 } elseif ($obj = $this->container->getByType($class)) {
+                    null;
                 } else {
                     $obj = $this->container->newInstance($class);
                 }

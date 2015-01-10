@@ -33,6 +33,12 @@ class RouterService
     /** @var array [error status=>controller] */
     private $errorHandlers = [];
 
+    /**
+     * @param Router    $facade Router facade.
+     * @param Container $c      DI container.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
     public function __construct(Router $facade, Container $c)
     {
         Request::enableHttpMethodParameterOverride();
@@ -40,42 +46,62 @@ class RouterService
         $this->c      = $c;
     }
 
-    public function addRoute(Route $route)
+    /**
+     * @param Route  $route Route.
+     * @param string $name  Optional route name.
+     *
+     * @return void
+     */
+    public function addRoute(Route $route, $name = null)
     {
+        if ($name) {
+            $this->namedRoutes[$name] = $route;
+        }
         if (in_array($route, $this->routes, true)) {
             return;
         }
         $this->routes[] = $route;
     }
 
-    public function registerNamedRoute($name, Route $route)
-    {
-        $this->namedRoutes[$name] = $route;
-        $this->addRoute($route);
-    }
-
+    /**
+     * @param int   $status     HTTP status code.
+     * @param mixed $controller Error controller.
+     *
+     * @return void
+     */
     public function addErrorHandler($status, $controller)
     {
         $this->errorHandlers[$status] = $controller;
     }
 
+    /**
+     * @param string $path   Path DSL.
+     * @param Router $router Child router.
+     *
+     * @return void
+     */
     public function addGroup($path, Router $router)
     {
         if (in_array($router, $this->childs)) {
             return;
         }
         $this->childs[$path] = $router;
-        $router->registerParent($path, $this->facade);
+        $router->registerParent($this->facade);
     }
 
-    public function registerParent($path, Router $router)
+    /**
+     * @param Router $router Parent router.
+     *
+     * @return void
+     */
+    public function registerParent(Router $router)
     {
         $this->parent = $router;
     }
 
     /**
-     * @param string  $name
-     * @param Request $req
+     * @param string  $name Optional route name.
+     * @param Request $req  HTTP request.
      *
      * @return Response
      */
@@ -108,9 +134,9 @@ class RouterService
     }
 
     /**
-     * @param string  $name
-     * @param Request $req
-     * @param string  $prefix
+     * @param string  $name   Optional route name.
+     * @param Request $req    HTTP request.
+     * @param string  $prefix URI prefix of the group.
      *
      * @return RequestedRoute|null
      */
@@ -135,9 +161,9 @@ class RouterService
     }
 
     /**
-     * @param int        $status
-     * @param Request    $req
-     * @param \Exception $ex
+     * @param int        $status HTTP status code.
+     * @param Request    $req    HTTP request.
+     * @param \Exception $ex     Exception.
      *
      * @return Response
      */
@@ -150,15 +176,15 @@ class RouterService
         $set->addContainer($this->c);
         $set->addRequest($req);
         $set->addArray(
-                [
-                    'e'         => $ex,
-                    'ex'        => $ex,
-                    'err'       => $ex,
-                    'error'     => $ex,
-                    'exception' => $ex,
-                    'Exception' => $ex,
-                ]
-            );
+            [
+                'e'         => $ex,
+                'ex'        => $ex,
+                'err'       => $ex,
+                'error'     => $ex,
+                'exception' => $ex,
+                'Exception' => $ex,
+            ]
+        );
         $injector = new FunctionInjector($set);
         try {
             $res = $injector->registerFunc($handler)
@@ -184,7 +210,7 @@ class RouterService
     }
 
     /**
-     * @param int $status
+     * @param int $status HTTP status code.
      *
      * @return mixed|null
      */

@@ -13,13 +13,14 @@ use Symfony\Component\Routing\Route as BaseRoute;
 use Symfony\Component\Routing\RouteCompiler;
 
 /**
+ * Path DSL compiler.
  */
 class Compiler
 {
     /**
      * Compile the route path DSL to a regex.
      *
-     * @param string $path
+     * @param string $path Path DSL.
      *
      * @return string
      */

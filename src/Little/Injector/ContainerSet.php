@@ -12,6 +12,9 @@ namespace Ranyuen\Little\Injector;
 use Ranyuen\Di\Container;
 use Ranyuen\Little\Request;
 
+/**
+ * Set of DI Containers.
+ */
 class ContainerSet implements \ArrayAccess
 {
     /** @var Container[] */
@@ -21,23 +24,46 @@ class ContainerSet implements \ArrayAccess
     /** @var array */
     private $array = [];
 
+    /**
+     * Add a container to the set.
+     *
+     * @param Container $c Container.
+     *
+     * @return void
+     */
     public function addContainer(Container $c)
     {
         $this->containers[] = $c;
     }
 
+    /**
+     * Add a HTTP Request to the set.
+     *
+     * @param Request $req Container.
+     *
+     * @return void
+     */
     public function addRequest(Request $req)
     {
         $this->reqs[] = $req;
     }
 
+    /**
+     * Add an array to the set.
+     *
+     * @param array $a Container.
+     *
+     * @return void
+     */
     public function addArray(array $a)
     {
         $this->array = array_merge($this->array, $a);
     }
 
     /**
-     * @param \ReflectionParameter $param
+     * Get a value from the containers by the ReflectionParameter.
+     *
+     * @param \ReflectionParameter $param Key.
      *
      * @return mixed|null
      */
@@ -57,6 +83,13 @@ class ContainerSet implements \ArrayAccess
         return $this[$param->name];
     }
 
+    /**
+     * Create a new instance of the class.
+     *
+     * @param string $class Class name.
+     *
+     * @return mixed
+     */
     public function newInstance($class)
     {
         $obj = $this->containers[0]->newInstance($class);
@@ -76,6 +109,13 @@ class ContainerSet implements \ArrayAccess
         return $obj;
     }
 
+    /**
+     * Get a value from the containers by the class name.
+     *
+     * @param string $class Class name.
+     *
+     * @return mixed
+     */
     public function getByType($class)
     {
         foreach ($this->containers as $c) {
@@ -98,7 +138,8 @@ class ContainerSet implements \ArrayAccess
         foreach ($this->reqs as $req) {
             if ($req->get($offset)
                 || isset($req->$offset)
-                || is_callable([$req, 'get'.ucfirst($offset)])) {
+                || is_callable([$req, 'get'.ucfirst($offset)])
+            ) {
                 return true;
             }
         }

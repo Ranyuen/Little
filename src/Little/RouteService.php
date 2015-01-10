@@ -34,6 +34,12 @@ class RouteService
     /** @var array */
     private $conditions = [];
 
+    /**
+     * @param Container $c          DI container.
+     * @param Router    $router     Owner of this route.
+     * @param Route     $facade     Route facade.
+     * @param mixed     $controller Invokable.
+     */
     public function __construct(Container $c, Router $router, Route $facade, $controller)
     {
         $this->c          = $c;
@@ -42,6 +48,11 @@ class RouteService
         $this->controller = $controller;
     }
 
+    /**
+     * @param string $method HTTP method.
+     *
+     * @return void
+     */
     public function addMethod($method)
     {
         if (in_array($method, $this->methods)) {
@@ -53,14 +64,20 @@ class RouteService
         }
     }
 
+    /**
+     * @param string $varName Variable name.
+     * @param mixed  $cond    Invokable.
+     *
+     * @return void
+     */
     public function addCondition($varName, $cond)
     {
         $this->conditions[$varName] = $cond;
     }
 
     /**
-     * @param Request $req
-     * @param string  $prefix
+     * @param Request $req    HTTP request.
+     * @param string  $prefix URI prefix of the group.
      *
      * @return Route|null
      */
@@ -96,11 +113,13 @@ class RouteService
     }
 
     /**
+     * @param Request $req  HTTP request.
+     * @param array   $vars Extra values.
+     *
      * @return mixed
      */
     public function response(Request $req, array $vars = [])
     {
-        $matches = [];
         $set = new ContainerSet();
         $set->addContainer($this->c);
         $set->addRequest($req);
