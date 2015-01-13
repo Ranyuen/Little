@@ -46,7 +46,7 @@ class Route
             return call_user_func_array([$this, $aliases[$name]], $args);
         }
         $routerMethods = [
-            'map', 'error', 'group', 'run', 'handle',
+            'map', 'error', 'group', 'run',
             'match', 'mount',
             'get', 'post', 'put', 'delete', 'options', 'patch',
         ];
