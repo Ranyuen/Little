@@ -1,8 +1,9 @@
 {
     "name": "ranyuen/little",
     "description": "Request-Route-Ракушки-Response",
+    "keywords": ["microframework", "rest", "router", "website"],
     "version": "0.0.1",
-    "license": "GLPv3",
+    "license": "GPL-3.0+",
     "authors": [
         {
             "name": "Sachirou Inoue",
