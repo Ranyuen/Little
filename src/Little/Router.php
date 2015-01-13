@@ -7,6 +7,7 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
@@ -17,6 +18,24 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class Router implements HttpKernelInterface
 {
+    /** @var array */
+    private static $plugins = [];
+
+    /**
+     * @param string $class Class name of the plugin.
+     *
+     * @return void
+     */
+    public static function plugin($class)
+    {
+        if (!class_exists($class)) {
+            return;
+        }
+        foreach ($class::METHODS as $method) {
+            self::$plugins[$method] = $class;
+        }
+    }
+
     /** @var RouterService */
     private $service;
     /** @var Container */
@@ -46,6 +65,11 @@ class Router implements HttpKernelInterface
         $httpMethods = ['get', 'post', 'put', 'delete', 'options', 'patch'];
         if (in_array($name, $httpMethods)) {
             return call_user_func_array([$this, 'map'], $args)->via($name);
+        }
+        if (isset(self::$plugins[$name])) {
+            $plugin = self::$plugins[$name];
+
+            return call_user_func_array([new $plugin($this), $name], $args);
         }
 
         return call_user_func_array([$this->service, $name], $args);

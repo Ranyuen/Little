@@ -127,10 +127,11 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('named', $res->getContent());
 
-        $r = new Router(new Ranyuen\Di\Container(['id' => 42]));
+        $r = new Router();
         $r->get('/named/{id}', function ($id) { return new Response("named $id"); })
             ->name('named');
         $req = Request::create('/noname');
+        $req->query->set('id', 42);
         $res = $r->run('named', $req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('named 42', $res->getContent());

@@ -7,4 +7,12 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
-class_alias('Symfony\Component\HttpFoundation\Request', 'Ranyuen\Little\Request');
+
+namespace Ranyuen\Little;
+
+/**
+ * Routing plugin.
+ */
+interface RoutingPlugin
+{
+}
