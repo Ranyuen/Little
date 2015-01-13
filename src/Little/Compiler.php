@@ -27,8 +27,6 @@ class Compiler
      */
     public function compile($path)
     {
-        $compiledRoute = (new RouteCompiler())->compile(new BaseRoute($path));
-
-        return $compiledRoute->getRegex();
+        return (new RouteCompiler())->compile(new BaseRoute($path))->getRegex();
     }
 }

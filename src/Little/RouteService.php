@@ -21,6 +21,8 @@ class RouteService
 {
     /** @var string */
     public $rawPath;
+    /** @var RouteCondition[] */
+    public $conditions = [];
 
     /** @var Container */
     private $c;
@@ -32,8 +34,6 @@ class RouteService
     private $controller;
     /** @var string[] */
     private $methods = [];
-    /** @var array */
-    private $conditions = [];
 
     /**
      * @param Container $c          DI container.
@@ -63,16 +63,6 @@ class RouteService
         if ('GET' === $method) {
             $this->addMethod('HEAD');
         }
-    }
-
-    /**
-     * @param RouteCondition $cond Condition.
-     *
-     * @return void
-     */
-    public function addCondition(RouteCondition $cond)
-    {
-        $this->conditions[] = $cond;
     }
 
     /**

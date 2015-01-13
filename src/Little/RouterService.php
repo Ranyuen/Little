@@ -19,6 +19,9 @@ use Ranyuen\Little\Injector\FunctionInjector;
  */
 class RouterService
 {
+    /** @var array [error status=>controller] */
+    public $errorHandlers = [];
+
     /** @var Router */
     private $facade;
     /** @var Router */
@@ -29,10 +32,8 @@ class RouterService
     private $c;
     /** @var Route[] */
     private $routes = [];
-    /** @var array */
+    /** @var array [string $name=>Route] */
     private $namedRoutes = [];
-    /** @var array [error status=>controller] */
-    private $errorHandlers = [];
 
     /**
      * @param Router    $facade Router facade.
@@ -62,17 +63,6 @@ class RouterService
             return;
         }
         $this->routes[] = $route;
-    }
-
-    /**
-     * @param int   $status     HTTP status code.
-     * @param mixed $controller Error controller.
-     *
-     * @return void
-     */
-    public function addErrorHandler($status, $controller)
-    {
-        $this->errorHandlers[$status] = $controller;
     }
 
     /**

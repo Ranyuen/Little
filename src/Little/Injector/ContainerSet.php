@@ -24,6 +24,8 @@ class ContainerSet implements \ArrayAccess
     private $reqs = [];
     /** @var array */
     private $array = [];
+    /** @var Container */
+    private $arrayContainer;
 
     /**
      * Add a container to the set.
@@ -59,6 +61,7 @@ class ContainerSet implements \ArrayAccess
     public function addArray(array $a)
     {
         $this->array = array_merge($this->array, $a);
+        $this->arrayContainer = null;
     }
 
     /**
@@ -70,15 +73,14 @@ class ContainerSet implements \ArrayAccess
      */
     public function getByParam(\ReflectionParameter $param)
     {
-        $type = null;
-        if ($param->getClass()) {
-            $type = $param->getClass()->name;
-        }
-        if (isset($this->array[$type])) {
-            return $this->array[$type];
-        }
-        if ($var = $this->getByType($type)) {
-            return $var;
+        if ($type = $param->getClass()) {
+            $type = $type->name;
+            if ($val = $this->getByType($type)) {
+                return $val;
+            }
+            if ($val = $this[$type]) {
+                return $val;
+            }
         }
 
         return $this[$param->name];
@@ -97,15 +99,17 @@ class ContainerSet implements \ArrayAccess
         foreach (array_slice($this->containers, 1) as $c) {
             $c->inject($obj);
         }
-        $c = new Container();
-        foreach ($this->array as $k => $v) {
-            if (false !== strpos($k, '\\')) {
-                $c->bind($k, $k, $v);
-            } else {
-                $c[$k] = $v;
+        if (is_null($this->arrayContainer)) {
+            $this->arrayContainer = new Container();
+            foreach ($this->array as $k => $v) {
+                if (false !== strpos($k, '\\')) {
+                    $this->arrayContainer->bind($k, $k, $v);
+                } else {
+                    $this->arrayContainer[$k] = $v;
+                }
             }
         }
-        $c->inject($obj);
+        $this->arrayContainer->inject($obj);
 
         return $obj;
     }
@@ -159,8 +163,8 @@ class ContainerSet implements \ArrayAccess
             }
         }
         foreach ($this->reqs as $req) {
-            if ($value = $req->get($offset)) {
-                return $value;
+            if ($val = $req->get($offset)) {
+                return $val;
             }
             if (isset($req->$offset)) {
                 return $req->$offset;
@@ -174,11 +178,15 @@ class ContainerSet implements \ArrayAccess
     public function offsetSet($offset, $value)
     {
         $this->array[$offset] = $value;
+        $this->arrayContainer = null;
     }
 
     public function offsetUnset($offset)
     {
-        unset($this->array[$offset]);
+        if (isset($this->array[$offset])) {
+            unset($this->array[$offset]);
+            $this->arrayContainer = null;
+        }
         foreach ($this->containers as $c) {
             unset($c[$offset]);
         }

@@ -39,7 +39,10 @@ use Ranyuen\Little\RoutingPlugin;
  */
 class ControllerAnnotationRouter implements RoutingPlugin
 {
-    const METHODS = ['registerController'];
+    public static function getImplMethods()
+    {
+        return ['registerController'];
+    }
 
     /** @var Router */
     private $router;

@@ -15,4 +15,10 @@ namespace Ranyuen\Little;
  */
 interface RoutingPlugin
 {
+    /**
+     * Implemented method names.
+     *
+     * @return string[]
+     */
+    public static function getImplMethods();
 }

@@ -104,7 +104,7 @@ class Route
         } else {
             $cond = RouteCondition::createFromPattern(func_get_arg(0), func_get_arg(1));
         }
-        $this->service->addCondition($cond);
+        $this->service->conditions[] = $cond;
 
         return $this;
     }

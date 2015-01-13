@@ -33,10 +33,7 @@ class FunctionInjector
      */
     public static function isRegex($str)
     {
-        if (!is_string($str)) {
-            return false;
-        }
-        if (!preg_match('/^[^A-Za-z0-9\\\s]/', $str)) {
+        if (!(is_string($str) && preg_match('/\A[^A-Za-z0-9\\\s]/', $str))) {
             return false;
         }
         $delimiter = $str[0];
@@ -50,7 +47,7 @@ class FunctionInjector
             $delimiter = $delimiters[$delimiter];
         }
 
-        return !!preg_match('/'.preg_quote($delimiter, '/').'[imsxeADSUXJu]*$/', $str);
+        return !!preg_match('/'.preg_quote($delimiter, '/').'[imsxeADSUXJu]*\z/', $str);
     }
 
     /**
@@ -100,7 +97,7 @@ class FunctionInjector
 
             return $this;
         }
-        throw new \InvalidArgumentException('Not a callable: '.(string) $func);
+        throw new \InvalidArgumentException('Not a invokable: '.(string) $func);
     }
 
     /**
@@ -179,14 +176,20 @@ class FunctionInjector
         } elseif ($func instanceof \ReflectionMethod) {
             $this->invocation = function () use ($func, $obj) {
                 if (!is_object($obj)) {
-                    $obj = $this->container
-                        ->newInstance($func->getDeclaringClass()->name);
+                    $class = $func->getDeclaringClass()->name;
+                    if ($obj = $this->container[$class]) {
+                        null;
+                    } elseif ($obj = $this->container->getByType($class)) {
+                        null;
+                    } else {
+                        $obj = $this->container->newInstance($class);
+                    }
                 }
 
                 return $func->invokeArgs($obj, func_get_args());
             };
             $this->params = $func->getParameters();
         }
-        throw new Exception();
+        throw new \InvalidArgumentException('Not a function: '.$func);
     }
 }
