@@ -73,7 +73,7 @@ class RouterService
      */
     public function addGroup($path, Router $router)
     {
-        if (in_array($router, $this->childs)) {
+        if (in_array($router, $this->childs, true)) {
             return;
         }
         $this->childs[$path] = $router;
