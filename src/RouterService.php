@@ -7,12 +7,10 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
-
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
-use Ranyuen\Little\Injector\ContainerSet;
-use Ranyuen\Little\Injector\FunctionInjector;
+use Ranyuen\Di\Dispatcher\Dispatcher;
 
 /**
  * Router service.
@@ -126,11 +124,12 @@ class RouterService
     {
         if ($name) {
             if (isset($this->namedRoutes[$name])) {
-                $set = new ContainerSet();
-                $set->addContainer($this->c);
-                $set->addRequest($req);
+                $dp = new Dispatcher($this->c);
+                $reqArray = new ParameterBag();
+                $reqArray->setRequest($req);
+                $dp->setNamedArgs($reqArray);
 
-                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, $set);
+                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, $dp);
             }
         } else {
             foreach ($this->routes as $route) {
@@ -158,23 +157,22 @@ class RouterService
         if (!($handler = $this->findErrorHandler($status))) {
             return new Response((string) $ex, $status);
         }
-        $set = new ContainerSet();
-        $set->addContainer($this->c);
-        $set->addRequest($req);
-        $set->addArray(
+        $dp = new Dispatcher($this->c);
+        $reqArray = new ParameterBag();
+        $reqArray->setRequest($req);
+        $dp->setNamedArgs($reqArray);
+        $dp->setNamedArgs(
             [
                 'e'         => $ex,
                 'ex'        => $ex,
                 'err'       => $ex,
                 'error'     => $ex,
                 'exception' => $ex,
-                'Exception' => $ex,
             ]
         );
-        $injector = new FunctionInjector($set);
+        $dp->setTypedArg('Exception', $ex);
         try {
-            $res = $injector->registerFunc($handler)
-                ->invoke();
+            $res = $dp->invoke($handler);
         } catch (\Exception $ex2) {
             if (500 === $status) {
                 return new Response((string) $ex2, 500);

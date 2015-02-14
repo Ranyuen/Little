@@ -7,12 +7,10 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
-
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
-use Ranyuen\Little\Injector\ContainerSet;
-use Ranyuen\Little\Injector\FunctionInjector;
+use Ranyuen\Di\Dispatcher\Dispatcher;
 
 /**
  * Route service.
@@ -80,39 +78,38 @@ class RouteService
         if (!preg_match($compiledPath, $req->getPathInfo(), $matches)) {
             return;
         }
-        $set = new ContainerSet();
-        $set->addContainer($this->c);
-        $set->addRequest($req);
-        $set->addArray(
+        $bag = new ParameterBag();
+        $bag->setRequest($req);
+        $bag->addArray(
             [
-                'req'                                      => $req,
-                'request'                                  => $req,
-                'Ranyuen\Little\Request'                   => $req,
-                'Symfony\Component\HttpFoundation\Request' => $req,
-                'router'                                   => $this->router,
-                'Ranyuen\Little\Router'                    => $this->router,
+                'req'     => $req,
+                'request' => $req,
+                'router'  => $this->router,
             ]
         );
-        $set->addArray($matches);
+        $bag->addArray($matches);
+        $bag->addArray($this->c);
+        $dp = new Dispatcher($this->c);
+        $dp->setNamedArgs($bag);
+        $dp->setTypedArg('Ranyuen\Little\Request', $req);
+        $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);
+        $dp->setTypedArg('Ranyuen\Little\Router', $this->router);
         foreach ($this->conditions as $cond) {
-            if (!$cond->isMatch($set)) {
+            if (!$cond->isMatch($bag, $dp)) {
                 return;
             }
         }
 
-        return new RequestedRoute($this->router, $this->facade, $req, $set);
+        return new RequestedRoute($this->router, $this->facade, $req, $dp);
     }
 
     /**
-     * @param ContainerSet $c DI container.
+     * @param Dispatcher $dp DI container.
      *
      * @return mixed
      */
-    public function response(ContainerSet $c)
+    public function response(Dispatcher $dp)
     {
-        $injector = new FunctionInjector($c);
-        $injector->registerFunc($this->controller);
-
-        return $injector->invoke();
+        return $dp->invoke($this->controller);
     }
 }

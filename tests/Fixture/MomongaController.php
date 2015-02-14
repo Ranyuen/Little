@@ -49,11 +49,6 @@ class MomongaController
 
     public function ditest()
     {
-        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->req);
-        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->request);
-        $this->test->assertInstanceOf('Ranyuen\Little\Request', $this->q);
-        $this->test->assertInstanceOf('Ranyuen\Little\Router', $this->router);
-        $this->test->assertInstanceOf('Ranyuen\Little\Router', $this->r);
         $this->test->assertInstanceOf('Fixture\Momonga', $this->args['momonga']);
         $this->test->assertInstanceOf('Fixture\Momonga', $this->args['m']);
         $this->test->assertInstanceOf('Fixture\Momonga', $this->momonga);

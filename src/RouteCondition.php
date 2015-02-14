@@ -7,11 +7,9 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
-
 namespace Ranyuen\Little;
 
-use Ranyuen\Little\Injector\ContainerSet;
-use Ranyuen\Little\Injector\FunctionInjector;
+use Ranyuen\Di\Dispatcher\Dispatcher;
 
 /**
  * Route Condition.
@@ -53,31 +51,31 @@ class RouteCondition
     private $pattern;
 
     /**
-     * @param ContainerSet $c Params.
+     * @param ParameterBag $bag Params.
+     * @param Dispatcher   $dp  Dispatcher with params.
      *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function isMatch(ContainerSet $c)
+    public function isMatch(ParameterBag $bag, Dispatcher $dp)
     {
         if ($this->invokable) {
-            $injector = new FunctionInjector($c);
-            $injector->registerFunc($this->invokable);
             try {
-                return $injector->invoke();
+                return $dp->invoke($this->invokable);
             } catch (\Exception $ex) { // This exception must be ignored.
                 return false;
             }
         }
-        $value = $c[$this->name];
+        $value = $bag[$this->name];
         if (is_null($value)) {
             return false;
         }
-        if (!FunctionInjector::isRegex($this->pattern)) {
+        if (!Dispatcher::isRegex($this->pattern)) {
             return $this->pattern === $value;
         }
+        $value = (string) $value;
 
-        return !!preg_match($this->pattern, (string) $value);
+        return !!preg_match($this->pattern, $value, $m) && $m[0] === $value;
     }
 }

@@ -7,10 +7,9 @@
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  */
-
 namespace Ranyuen\Little;
 
-use Ranyuen\Little\Injector\ContainerSet;
+use Ranyuen\Di\Dispatcher\Dispatcher;
 
 /**
  * HTTP Requested Route.
@@ -25,21 +24,21 @@ class RequestedRoute
     private $route;
     /** @var Request */
     private $req;
-    /** @var ContainerSet */
-    private $c;
+    /** @var Dispatcher */
+    private $dp;
 
     /**
-     * @param Router       $router The router that has the route.
-     * @param Route        $route  Matched route.
-     * @param Request      $req    HTTP Request.
-     * @param ContainerSet $c      DI container.
+     * @param Router     $router The router that has the route.
+     * @param Route      $route  Matched route.
+     * @param Request    $req    HTTP Request.
+     * @param Dispatcher $dp     DI container.
      */
-    public function __construct(Router $router, Route $route, Request $req, ContainerSet $c)
+    public function __construct(Router $router, Route $route, Request $req, Dispatcher $dp)
     {
         $this->router = $router;
         $this->route  = $route;
         $this->req    = $req;
-        $this->c      = $c;
+        $this->dp     = $dp;
     }
 
     /**
@@ -51,9 +50,9 @@ class RequestedRoute
      */
     public function response(array $vars = [])
     {
-        $this->c->addArray($vars);
+        $this->dp->setNamedArgs($vars);
 
-        return $this->route->response($this->c);
+        return $this->route->response($this->dp);
     }
 
     /**
