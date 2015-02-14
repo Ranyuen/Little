@@ -168,9 +168,15 @@ class RouterService
                 'err'       => $ex,
                 'error'     => $ex,
                 'exception' => $ex,
+                'req'       => $req,
+                'request'   => $req,
+                'router'    => $this->facade,
             ]
         );
         $dp->setTypedArg('Exception', $ex);
+        $dp->setTypedArg('Ranyuen\Little\Request', $req);
+        $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);
+        $dp->setTypedArg('Ranyuen\Little\Router', $this->facade);
         try {
             $res = $dp->invoke($handler);
         } catch (\Exception $ex2) {
