@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -17,6 +18,8 @@ use Ranyuen\Di\Dispatcher\Dispatcher;
 class RouteCondition
 {
     /**
+     * Factory.
+     *
      * @param mixed $invokable Invokable.
      *
      * @return self
@@ -30,6 +33,8 @@ class RouteCondition
     }
 
     /**
+     * Factory.
+     *
      * @param string $name    Variable name.
      * @param mixed  $pattern Expected pattern or value.
      *
@@ -43,14 +48,28 @@ class RouteCondition
         return $cond;
     }
 
-    /** @var mixed */
+    /**
+     * Invokable.
+     *
+     * @var mixed
+     */
     private $invokable;
-    /** @var string */
+    /**
+     * Target param name.
+     *
+     * @var string
+     */
     private $name;
-    /** @var mixed */
+    /**
+     * Condition.
+     *
+     * @var mixed
+     */
     private $pattern;
 
     /**
+     * Dose the param match the condition?
+     *
      * @param ParameterBag $bag Params.
      * @param Dispatcher   $dp  Dispatcher with params.
      *
@@ -63,7 +82,8 @@ class RouteCondition
         if ($this->invokable) {
             try {
                 return $dp->invoke($this->invokable);
-            } catch (\Exception $ex) { // This exception must be ignored.
+            } catch (\Exception $ex) {
+                // This exception must be ignored.
                 return false;
             }
         }

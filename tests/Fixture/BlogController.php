@@ -4,7 +4,7 @@ namespace Fixture;
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
- /** @Route('/blog') */
+/** @Route('/blog') */
  class BlogController
  {
      /**

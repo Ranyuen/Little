@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -17,23 +18,53 @@ use Ranyuen\Di\Dispatcher\Dispatcher;
  */
 class RouteService
 {
-    /** @var string */
+    /**
+     * Yet-compiled path.
+     *
+     * @var string
+     */
     public $rawPath;
-    /** @var RouteCondition[] */
+    /**
+     * Conditions.
+     *
+     * @var RouteCondition[]
+     */
     public $conditions = [];
 
-    /** @var Container */
+    /**
+     * DI container.
+     *
+     * @var Container
+     */
     private $c;
-    /** @var Router */
+    /**
+     * Router that holds this route.
+     *
+     * @var Router
+     */
     private $router;
-    /** @var Route */
+    /**
+     * Facade.
+     *
+     * @var Route
+     */
     private $facade;
-    /** @var mixed */
+    /**
+     * Controller.
+     *
+     * @var mixed
+     */
     private $controller;
-    /** @var string[] */
+    /**
+     * HTTP methods.
+     *
+     * @var string[]
+     */
     private $methods = [];
 
     /**
+     * Constructor.
+     *
      * @param Container $c          DI container.
      * @param Router    $router     Owner of this route.
      * @param Route     $facade     Route facade.
@@ -48,6 +79,8 @@ class RouteService
     }
 
     /**
+     * Set HTTP method.
+     *
      * @param string $method HTTP method.
      *
      * @return void
@@ -64,10 +97,12 @@ class RouteService
     }
 
     /**
+     * Match and process an HTTP request.
+     *
      * @param Request $req    HTTP request.
      * @param string  $prefix URI prefix of the group.
      *
-     * @return Route|null
+     * @return RequestedRoute|null
      */
     public function matchRequest(Request $req, $prefix = '')
     {
@@ -104,6 +139,8 @@ class RouteService
     }
 
     /**
+     * Run the controller.
+     *
      * @param Dispatcher $dp DI container.
      *
      * @return mixed

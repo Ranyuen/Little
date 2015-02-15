@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -14,14 +15,28 @@ namespace Ranyuen\Little;
  */
 class ParameterBag implements \ArrayAccess
 {
-    /** @var array */
+    /**
+     * Params.
+     *
+     * @var array
+     */
     private $array = [];
-    /** @var ArrayAccess[] */
+    /**
+     * Not arrays.
+     *
+     * @var ArrayAccess[]
+     */
     private $arrays = [];
-    /** @var Request */
+    /**
+     * HTTP request.
+     *
+     * @var Request
+     */
     private $req;
 
     /**
+     * Add params through an array.
+     *
      * @param array|ArrayAccess $array Array.
      *
      * @return void
@@ -39,6 +54,8 @@ class ParameterBag implements \ArrayAccess
     }
 
     /**
+     * Add params in an HTTP request.
+     *
      * @param Request $req HTTP request.
      *
      * @return void

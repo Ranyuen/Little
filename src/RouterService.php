@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -17,23 +18,53 @@ use Ranyuen\Di\Dispatcher\Dispatcher;
  */
 class RouterService
 {
-    /** @var array [error status=>controller] */
+    /**
+     * Error handlers.
+     *
+     * @var array [error status=>controller]
+     */
     public $errorHandlers = [];
 
-    /** @var Router */
+    /**
+     * Facade.
+     *
+     * @var Router
+     */
     private $facade;
-    /** @var Router */
+    /**
+     * Parent router.
+     *
+     * @var Router
+     */
     private $parent;
-    /** @var Router[] */
+    /**
+     * Child routers.
+     *
+     * @var Router[]
+     */
     private $childs = [];
-    /** @var Container */
+    /**
+     * DI container.
+     *
+     * @var Container
+     */
     private $c;
-    /** @var Route[] */
+    /**
+     * Routes.
+     *
+     * @var Route[]
+     */
     private $routes = [];
-    /** @var array [string $name=>Route] */
+    /**
+     * Routes has a name.
+     *
+     * @var array [string $name=>Route]
+     */
     private $namedRoutes = [];
 
     /**
+     * Constructor.
+     *
      * @param Router    $facade Router facade.
      * @param Container $c      DI container.
      *
@@ -47,6 +78,8 @@ class RouterService
     }
 
     /**
+     * Add a route.
+     *
      * @param Route  $route Route.
      * @param string $name  Optional route name.
      *
@@ -64,6 +97,8 @@ class RouterService
     }
 
     /**
+     * Add a child router.
+     *
      * @param string $path   Path DSL.
      * @param Router $router Child router.
      *
@@ -79,6 +114,8 @@ class RouterService
     }
 
     /**
+     * Set the router as a parent.
+     *
      * @param Router $router Parent router.
      *
      * @return void
@@ -89,6 +126,8 @@ class RouterService
     }
 
     /**
+     * Process a HTTP request.
+     *
      * @param string  $name Optional route name.
      * @param Request $req  HTTP request.
      *
@@ -114,6 +153,8 @@ class RouterService
     }
 
     /**
+     * Find a route by the HTTP request.
+     *
      * @param string  $name   Optional route name.
      * @param Request $req    HTTP request.
      * @param string  $prefix URI prefix of the group.
@@ -146,6 +187,8 @@ class RouterService
     }
 
     /**
+     * Process an HTTP error.
+     *
      * @param int        $status HTTP status code.
      * @param Request    $req    HTTP request.
      * @param \Exception $ex     Exception.
@@ -200,6 +243,8 @@ class RouterService
     }
 
     /**
+     * Find an error handler.
+     *
      * @param int $status HTTP status code.
      *
      * @return mixed|null

@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little\Plugin;
 
@@ -49,18 +50,21 @@ class ConfigRouter implements RoutingPlugin
         return ['routeByConfig'];
     }
 
-    /** @var Router */
+    /**
+     * Router.
+     *
+     * @var Router
+     */
     private $router;
 
-    /**
-     * @param Router $r Router.
-     */
     public function __construct(Router $r)
     {
         $this->router = $r;
     }
 
     /**
+     * Route by config.
+     *
      * @param array $config Routing config.
      *
      * @return Router

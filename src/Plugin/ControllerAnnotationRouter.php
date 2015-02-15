@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little\Plugin;
 
@@ -43,18 +44,21 @@ class ControllerAnnotationRouter implements RoutingPlugin
         return ['registerController'];
     }
 
-    /** @var Router */
+    /**
+     * Router.
+     *
+     * @var Router
+     */
     private $router;
 
-    /**
-     * @param Router $r Router.
-     */
     public function __construct(Router $r)
     {
         $this->router = $r;
     }
 
     /**
+     * Route by controller annotations.
+     *
      * @param string $class Controller class name.
      *
      * @return Router

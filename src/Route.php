@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -16,12 +17,22 @@ use Ranyuen\Di\Container;
  */
 class Route
 {
-    /** @var RouteService */
+    /**
+     * Service.
+     *
+     * @var RouteService
+     */
     private $service;
-    /** @var Router */
+    /**
+     * Owner of this route.
+     *
+     * @var Router
+     */
     private $router;
 
     /**
+     * Constructor.
+     *
      * @param Container $c          DI container.
      * @param Router    $router     Owner of this route.
      * @param string    $path       Path DSL.
@@ -57,7 +68,9 @@ class Route
     }
 
     /**
-     * via('GET', 'POST') or via(['GET', 'POST']).
+     * Set HTTP method.
+     *
+     * Usage: via('GET', 'POST') or via(['GET', 'POST']).
      *
      * @return this
      */
@@ -76,6 +89,8 @@ class Route
     }
 
     /**
+     * Name this route.
+     *
      * @param string $name Name.
      *
      * @return this
@@ -88,6 +103,9 @@ class Route
     }
 
     /**
+     * Add condition.
+     *
+     * Usage:
      * assert('name', 'mOmonga')
      * or assert('name', '/\A[A-Z]/')
      * or assert(function ($name) { return $name === 'mOmonga'; })

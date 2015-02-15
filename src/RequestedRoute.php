@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -18,19 +19,37 @@ use Ranyuen\Di\Dispatcher\Dispatcher;
  */
 class RequestedRoute
 {
-    /** @var Router */
+    /**
+     * Router that holds the route.
+     *
+     * @var Router
+     */
     private $router;
-    /** @var Route */
+    /**
+     * Matched route.
+     *
+     * @var Route
+     */
     private $route;
-    /** @var Request */
+    /**
+     * HTTP request.
+     *
+     * @var Request
+     */
     private $req;
-    /** @var Dispatcher */
+    /**
+     * DI container.
+     *
+     * @var Dispatcher
+     */
     private $dp;
 
     /**
-     * @param Router     $router The router that has the route.
+     * Constructor.
+     *
+     * @param Router     $router Router that holds the route.
      * @param Route      $route  Matched route.
-     * @param Request    $req    HTTP Request.
+     * @param Request    $req    HTTP request.
      * @param Dispatcher $dp     DI container.
      */
     public function __construct(Router $router, Route $route, Request $req, Dispatcher $dp)

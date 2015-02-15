@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0881cde7094e688b6813a38adda78b87",
+    "hash": "a4bbeb707a52350343c453fa197e80b1",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -224,12 +224,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ranyuen/Di.git",
-                "reference": "f5b22fab9ffebb25416170d761eb22f37695d2a6"
+                "reference": "a63f25d202ec75bf3596c44e86889a8ea2f191cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/f5b22fab9ffebb25416170d761eb22f37695d2a6",
-                "reference": "f5b22fab9ffebb25416170d761eb22f37695d2a6",
+                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/a63f25d202ec75bf3596c44e86889a8ea2f191cd",
+                "reference": "a63f25d202ec75bf3596c44e86889a8ea2f191cd",
                 "shasum": ""
             },
             "require": {
@@ -239,11 +239,11 @@
                 "pimple/pimple": "~3.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "~1.0@dev",
-                "phing/phing": "~2.8",
-                "phpmd/phpmd": "~2.1",
-                "phpunit/phpunit": "~4.3",
-                "squizlabs/php_codesniffer": "~1.5"
+                "fabpot/php-cs-fixer": "~2.0@dev",
+                "phing/phing": "~2.10",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/phpunit": "~4.5",
+                "squizlabs/php_codesniffer": "~2.2"
             },
             "type": "library",
             "autoload": {
@@ -275,7 +275,7 @@
                 "di",
                 "method invocation"
             ],
-            "time": "2015-02-09 06:45:48"
+            "time": "2015-02-15 07:56:04"
         },
         {
             "name": "symfony/http-foundation",
@@ -456,16 +456,16 @@
         },
         {
             "name": "fabpot/php-cs-fixer",
-            "version": "1.5.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "fee1e666a59741809986c5a3691cc884eb5532d1"
+                "reference": "2f0712fe3aeb7124e2e23dbbcd0710c50a26f125"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/fee1e666a59741809986c5a3691cc884eb5532d1",
-                "reference": "fee1e666a59741809986c5a3691cc884eb5532d1",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/2f0712fe3aeb7124e2e23dbbcd0710c50a26f125",
+                "reference": "2f0712fe3aeb7124e2e23dbbcd0710c50a26f125",
                 "shasum": ""
             },
             "require": {
@@ -485,6 +485,11 @@
                 "php-cs-fixer"
             ],
             "type": "application",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Symfony\\CS\\": "Symfony/CS/"
@@ -505,7 +510,7 @@
                 }
             ],
             "description": "A script to automatically fix Symfony Coding Standard",
-            "time": "2015-02-08 20:16:13"
+            "time": "2015-02-14 02:31:24"
         },
         {
             "name": "pdepend/pdepend",
@@ -548,16 +553,16 @@
         },
         {
             "name": "phing/phing",
-            "version": "2.9.1",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "393edeffa8a85d43636ce0c9b4deb1ff9ac60a5c"
+                "reference": "4927448a7bda2e1408d5fcbf7f725dc5bdcaf76d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/393edeffa8a85d43636ce0c9b4deb1ff9ac60a5c",
-                "reference": "393edeffa8a85d43636ce0c9b4deb1ff9ac60a5c",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/4927448a7bda2e1408d5fcbf7f725dc5bdcaf76d",
+                "reference": "4927448a7bda2e1408d5fcbf7f725dc5bdcaf76d",
                 "shasum": ""
             },
             "require": {
@@ -566,7 +571,7 @@
             "require-dev": {
                 "ext-pdo_sqlite": "*",
                 "lastcraft/simpletest": "@dev",
-                "pdepend/pdepend": "1.x",
+                "pdepend/pdepend": "2.x",
                 "pear-pear.php.net/http_request2": "2.2.x",
                 "pear-pear.php.net/net_growl": "2.7.x",
                 "pear-pear.php.net/pear_packagefilemanager": "1.7.x",
@@ -577,9 +582,10 @@
                 "pear/versioncontrol_svn": "@dev",
                 "phpdocumentor/phpdocumentor": "2.x",
                 "phploc/phploc": "2.x",
+                "phpmd/phpmd": "~2.2",
                 "phpunit/phpunit": ">=3.7",
                 "sebastian/phpcpd": "2.x",
-                "squizlabs/php_codesniffer": "1.5.x"
+                "squizlabs/php_codesniffer": "~2.2"
             },
             "suggest": {
                 "pdepend/pdepend": "PHP version of JDepend",
@@ -633,7 +639,7 @@
                 "task",
                 "tool"
             ],
-            "time": "2014-12-03 09:18:46"
+            "time": "2015-02-09 20:05:38"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1548,46 +1554,39 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "1.5.6",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5"
+                "reference": "b301c98f19414d836fdaa678648745fcca5aeb4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6f3e42d311b882b25b4d409d23a289f4d3b803d5",
-                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b301c98f19414d836fdaa678648745fcca5aeb4f",
+                "reference": "b301c98f19414d836fdaa678648745fcca5aeb4f",
                 "shasum": ""
             },
             "require": {
                 "ext-tokenizer": "*",
                 "php": ">=5.1.2"
             },
-            "suggest": {
-                "phpunit/php-timer": "dev-master"
-            },
             "bin": [
-                "scripts/phpcs"
+                "scripts/phpcs",
+                "scripts/phpcbf"
             ],
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-phpcs-fixer": "2.0.x-dev"
-                }
-            },
             "autoload": {
                 "classmap": [
                     "CodeSniffer.php",
                     "CodeSniffer/CLI.php",
                     "CodeSniffer/Exception.php",
                     "CodeSniffer/File.php",
+                    "CodeSniffer/Fixer.php",
                     "CodeSniffer/Report.php",
                     "CodeSniffer/Reporting.php",
                     "CodeSniffer/Sniff.php",
                     "CodeSniffer/Tokens.php",
                     "CodeSniffer/Reports/",
-                    "CodeSniffer/CommentParser/",
                     "CodeSniffer/Tokenizers/",
                     "CodeSniffer/DocGenerators/",
                     "CodeSniffer/Standards/AbstractPatternSniff.php",
@@ -1613,13 +1612,13 @@
                     "role": "lead"
                 }
             ],
-            "description": "PHP_CodeSniffer tokenises PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
             "homepage": "http://www.squizlabs.com/php-codesniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-12-04 22:32:15"
+            "time": "2015-01-21 22:44:05"
         },
         {
             "name": "symfony/config",

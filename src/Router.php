@@ -6,6 +6,7 @@
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
  * @copyright 2014-2015 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
+ * @link      https://github.com/Ranyuen/Little
  */
 namespace Ranyuen\Little;
 
@@ -16,10 +17,16 @@ use Ranyuen\Di\Container;
  */
 class Router
 {
-    /** @var array */
+    /**
+     * Routing plugins.
+     *
+     * @var array
+     */
     private static $plugins = [];
 
     /**
+     * Register a routing plugin.
+     *
      * @param string $class Class name of the plugin.
      *
      * @return void
@@ -34,12 +41,22 @@ class Router
         }
     }
 
-    /** @var RouterService */
+    /**
+     * Service.
+     *
+     * @var RouterService
+     */
     private $service;
-    /** @var Container */
+    /**
+     * DI container.
+     *
+     * @var Container
+     */
     private $c;
 
     /**
+     * Constructor.
+     *
      * @param Container $c DI container.
      */
     public function __construct(Container $c = null)
@@ -74,6 +91,8 @@ class Router
     }
 
     /**
+     * Map a controller by path.
+     *
      * @param string $path       Path DSL.
      * @param mixed  $controller Invokable.
      *
@@ -116,6 +135,8 @@ class Router
     }
 
     /**
+     * Create a controller group.
+     *
      * @param string        $path   Path DSL.
      * @param self|callback $router Child router, or child router configuration.
      *
