@@ -128,7 +128,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('named', $res->getContent());
 
         $r = new Router();
-        $r->get('/named/{id}', function ($id) { return new Response("named $id"); })
+        $r->get('/named/:id', function ($id) { return new Response("named $id"); })
             ->name('named');
         $req = Request::create('/noname');
         $req->query->set('id', 42);
@@ -204,12 +204,39 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Sinatra-like routing format.
+     */
+    public function testRegexRoutePath()
+    {
+        $test = $this;
+
+        $r = new Router();
+        $r->get('#/first/(.+?)/second/(?<third>.+)#', function ($matches, $third) use ($test) {
+            $test->assertEquals('momonga', $matches[1]);
+            $test->assertEquals('momonga/momonga', $matches[2]);
+            $test->assertEquals('momonga/momonga', $third);
+        });
+        $req = Request::create('/first/momonga/second/momonga/momonga');
+        $res = $r->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $r = new Router();
+        $r->get('/first/*/second/*', function ($matches) use ($test) {
+            $test->assertEquals('momonga', $matches[1]);
+            $test->assertEquals('momonga/momonga', $matches[2]);
+        });
+        $req = Request::create('/first/momonga/second/momonga/momonga');
+        $res = $r->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+    }
+
+    /**
      * Controller callback can get URL, GET & POST params through its args.
      */
     public function testRequestAndRouteParam()
     {
         $r = new Router();
-        $r->put('/basic/{id}', function ($id, $name) {
+        $r->put('/basic/:id', function ($id, $name) {
             return new Response("$name $id");
         });
         $req = Request::create('/basic/42', 'PUT', ['id' => 41, 'name' => 'mOmonga']);
