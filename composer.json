@@ -13,8 +13,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
-        "symfony/routing": "~2.5",
-        "symfony/http-foundation": "~2.5",
+        "symfony/http-foundation": "~2.6",
         "hafriedlander/php-peg": "dev-master@dev",
         "ranyuen/di": "dev-dev0.2.1@dev"
     },
@@ -26,6 +25,7 @@
         "fabpot/php-cs-fixer": "~2.0@dev"
     },
     "autoload": {
-        "psr-4": {"Ranyuen\\Little\\": "src/"}
+        "psr-4": {"Ranyuen\\Little\\": "src/"},
+        "classmap": ["res/PathCompiler.php"]
     }
 }

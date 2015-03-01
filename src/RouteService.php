@@ -103,13 +103,20 @@ class RouteService
      * @param string  $prefix URI prefix of the group.
      *
      * @return RequestedRoute|null
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function matchRequest(Request $req, $prefix = '')
     {
         if (!in_array($req->getMethod(), $this->methods)) {
             return;
         }
-        $compiledPath = (new Compiler())->compile($prefix.$this->rawPath);
+        if ('/' !== substr($this->rawPath, 0) && Dispatcher::isRegex($this->rawPath)) {
+            preg_match('#\A(.)(.*)(.[imsxeADSUXJu]*)\z#', $this->rawPath, $matches);
+            $compiledPath = $matches[1].'\A(?:'.preg_quote($prefix, $matches[1]).')'.$matches[2].'\z'.$matches[3];
+        } else {
+            $compiledPath = (new PathCompiler($prefix.$this->rawPath))->compile();
+        }
         if (!preg_match($compiledPath, $req->getPathInfo(), $matches)) {
             return;
         }
@@ -117,6 +124,7 @@ class RouteService
         $bag->setRequest($req);
         $bag->addArray(
             [
+                'matches' => $matches,
                 'req'     => $req,
                 'request' => $req,
                 'router'  => $this->router,

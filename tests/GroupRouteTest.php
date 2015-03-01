@@ -10,8 +10,8 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
     public function testBasicGroup()
     {
         $child = new Router();
-        $child->get('/{id}', function ($id) { return "GET $id"; });
-        $child->post('/{id}', function ($id) { return "POST $id"; });
+        $child->get('/:id', function ($id) { return "GET $id"; });
+        $child->post('/:id', function ($id) { return "POST $id"; });
         $r = new Router();
         $r->group('/user', $child);
 
@@ -32,8 +32,8 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->group('/user', function ($r) {
-            $r->get('/{id}', function ($id) { return "GET $id"; });
-            $r->post('/{id}', function ($id) { return "POST $id"; });
+            $r->get('/:id', function ($id) { return "GET $id"; });
+            $r->post('/:id', function ($id) { return "POST $id"; });
         });
 
         $req = Request::create('/user/42');
