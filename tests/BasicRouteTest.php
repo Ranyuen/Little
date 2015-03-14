@@ -19,9 +19,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testBasicRoute()
     {
         $r = new Router();
-        $r->get('/basic', function () { return new Response('basic'); });
+        $r->get('/basic/', function () { return new Response('basic'); });
 
-        $req = Request::create('/basic');
+        $req = Request::create('/basic/');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('basic', $res->getContent());

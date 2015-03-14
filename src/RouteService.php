@@ -111,7 +111,7 @@ class RouteService
         if (!in_array($req->getMethod(), $this->methods)) {
             return;
         }
-        if ('/' !== substr($this->rawPath, 0) && Dispatcher::isRegex($this->rawPath)) {
+        if ('/' !== substr($this->rawPath, 0, 1) && Dispatcher::isRegex($this->rawPath)) {
             preg_match('#\A(.)(.*)(.[imsxeADSUXJu]*)\z#', $this->rawPath, $matches);
             $compiledPath = $matches[1].'\A(?:'.preg_quote($prefix, $matches[1]).')'.$matches[2].'\z'.$matches[3];
         } else {
