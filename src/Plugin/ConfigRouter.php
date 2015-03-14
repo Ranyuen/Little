@@ -21,7 +21,7 @@ use Ranyuen\Little\RoutingPlugin;
  *     $r = new Router();
  *     $r->routeByConfig([
  *         'map' => [
- *             '/' => 'IndexController@index',
+ *             ['/', 'IndexController@index'],
  *         ],
  *         'error' => [
  *             500 => 'IndexController@error500',
@@ -29,12 +29,13 @@ use Ranyuen\Little\RoutingPlugin;
  *         'group' => [
  *             '/blog' => [
  *                 'map' => [
- *                     '/{page}' => [
+ *                     [
+ *                         '/{page}',
  *                         'BlogController@index',
  *                         'name'   => 'blog_index',
  *                         'assert' => ['page' => '/\A\d+\z/'],
  *                     ],
- *                     '/show/{id}' => 'BlogController@show',
+ *                     ['/show/{id}', 'BlogController@show'],
  *                 ],
  *                 'error' => [
  *                     404 => 'BlogController@notFound',
@@ -90,12 +91,13 @@ class ConfigRouter implements RoutingPlugin
 
     private function map(array $config)
     {
-        foreach ($config as $path => $val) {
+        foreach ($config as $val) {
             if (!is_array($val)) {
                 $this->router->get($path, $val);
                 continue;
             }
-            $route = $this->router->map($path, $val[0]);
+            list($path, $controller) = $val;
+            $route = $this->router->map($path, $controller);
             if (isset($val['via'])) {
                 $route->via($val['via']);
             } else {

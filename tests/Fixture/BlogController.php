@@ -8,7 +8,7 @@ use Ranyuen\Little\Router;
  class BlogController
  {
      /**
-      * @Route('/:page',name=blog_index,assert={page='/\A\d+\z/'})
+      * @Route('/:page',name=blog_index,assert={page='/\d+/'})
       */
      public function index($page = 1)
      {
@@ -18,12 +18,18 @@ use Ranyuen\Little\Router;
      /** @Route('/show/:id') */
      public function show(Router $r, Request $req)
      {
-         return $r->error(404, $req);
+         return $r->error(403, $req);
      }
 
-     /** @Route(error=404) */
+     /** @Route('/show/:id',via=POST) */
+     public function showPost($id)
+     {
+         return "POST $id";
+     }
+
+     /** @Route(error=403) */
      public function notFound()
      {
-         return 'blog 404';
+         return 'blog 403';
      }
  }

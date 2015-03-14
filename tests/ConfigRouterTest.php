@@ -19,7 +19,7 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->routeByConfig([
             'map' => [
-                '/' => function () { return 'index'; },
+                ['/', function () { return 'index'; }],
             ],
             'error' => [
                 500 => function () { return 'index 500'; },
@@ -27,12 +27,13 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
             'group' => [
                 '/blog' => [
                     'map' => [
-                        '/:page' => [
+                        [
+                            '/:page',
                             function ($page) { return "blog index $page"; },
                             'assert' => ['page' => '/\A\d+\z/'],
                             'name'   => 'blog_index',
                         ],
-                        '/show/:id' => function (Router $r, Request $req) { return $r->error(404, $req); },
+                        ['/show/:id', function (Router $r, Request $req) { return $r->error(404, $req); }],
                     ],
                     'error' => [
                         404 => function () { return 'blog 404'; },

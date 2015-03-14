@@ -61,15 +61,15 @@ class RouteAnnotation extends Annotation
         }
         if (isset($route[0])) {
             $path = $route[0];
-            $routes['map'][$path] = ["$class->name@$method->name"];
+            $routes['map'][] = [$path, "$class->name@$method->name"];
             if (isset($route['via'])) {
-                $routes['map'][$path]['via'] = $route['via'];
+                $routes['map'][count($routes['map']) - 1]['via'] = $route['via'];
             }
             if (isset($route['name'])) {
-                $routes['map'][$path]['name'] = $route['name'];
+                $routes['map'][count($routes['map']) - 1]['name'] = $route['name'];
             }
             if (isset($route['assert'])) {
-                $routes['map'][$path]['assert'] = $route['assert'];
+                $routes['map'][count($routes['map']) - 1]['assert'] = $route['assert'];
             }
         }
         if (isset($route['error'])) {

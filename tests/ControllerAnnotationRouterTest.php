@@ -32,7 +32,12 @@ class ControllerAnnotationRouterTest extends PHPUnit_Framework_TestCase
 
         $req = Request::create('/blog/show/mOmonga');
         $res = $r->run($req);
-        $this->assertEquals(404, $res->getStatusCode());
-        $this->assertEquals('blog 404', $res->getContent());
+        $this->assertEquals(403, $res->getStatusCode());
+        $this->assertEquals('blog 403', $res->getContent());
+
+        $req = Request::create('/blog/show/mOmonga', 'POST');
+        $res = $r->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals('POST mOmonga', $res->getContent());
     }
 }
