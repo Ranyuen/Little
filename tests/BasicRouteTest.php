@@ -173,6 +173,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
      * |Current request.    |Request   |$req, $request                   |
      * |Caused exception.   |\Exception|$e, $ex, $exception, $err, $error|
      * |Binding router.     |Router    |$router                          |
+     * |Params in URL.      |none.     |$matches                         |
      * |Each request params.|none.     |Param name.                      |
      */
     public function testControllerArgs()

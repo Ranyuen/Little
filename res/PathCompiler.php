@@ -281,13 +281,11 @@ function match_Option ($stack = array()) {
 
 
 
-    private $main;
     private $conditions = [];
 
     public function __construct($path, $conditions = [])
     {
         parent::__construct($path);
-        $this->main       = $this->match_Main()['val'];
         $this->conditions = $conditions;
     }
 
@@ -301,7 +299,7 @@ function match_Option ($stack = array()) {
     public function compile()
     {
         $regex = '';
-        foreach ($this->main as $element) {
+        foreach ($this->match_Main()['val'] as $element) {
             switch ($element['type']) {
                 case 'Param':
                     $regex .= $this->compileParam($element);

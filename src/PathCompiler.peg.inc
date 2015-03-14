@@ -78,13 +78,11 @@ Option: '?'
 
 */
 
-    private $main;
     private $conditions = [];
 
     public function __construct($path, $conditions = [])
     {
         parent::__construct($path);
-        $this->main       = $this->match_Main()['val'];
         $this->conditions = $conditions;
     }
 
@@ -98,7 +96,7 @@ Option: '?'
     public function compile()
     {
         $regex = '';
-        foreach ($this->main as $element) {
+        foreach ($this->match_Main()['val'] as $element) {
             switch ($element['type']) {
                 case 'Param':
                     $regex .= $this->compileParam($element);
