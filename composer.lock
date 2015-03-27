@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5c2503a5c7228d75efbf593365357a14",
+    "hash": "2f7304d8968af102e6992b7ea8f64502",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -224,12 +224,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ranyuen/Di.git",
-                "reference": "a63f25d202ec75bf3596c44e86889a8ea2f191cd"
+                "reference": "ec1b566fbae4e7baabb1b025d79f6634d35de840"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/a63f25d202ec75bf3596c44e86889a8ea2f191cd",
-                "reference": "a63f25d202ec75bf3596c44e86889a8ea2f191cd",
+                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/ec1b566fbae4e7baabb1b025d79f6634d35de840",
+                "reference": "ec1b566fbae4e7baabb1b025d79f6634d35de840",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
                 "di",
                 "method invocation"
             ],
-            "time": "2015-02-15 07:56:04"
+            "time": "2015-03-27 20:25:22"
         },
         {
             "name": "symfony/http-foundation",

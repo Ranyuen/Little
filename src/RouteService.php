@@ -120,8 +120,21 @@ class RouteService
         if (!preg_match($compiledPath, $req->getPathInfo(), $matches)) {
             return;
         }
+        $dp = new Dispatcher($this->c);
         $bag = new ParameterBag();
         $bag->setRequest($req);
+        $bag->addArray(
+            array_reduce(
+                $dp->getParameters($this->controller),
+                function ($carry, $param) {
+                    if ($param->isDefaultValueAvailable()) {
+                        $carry[$param->name] = $param->getDefaultValue();
+                    }
+                    return $carry;
+                },
+                []
+            )
+        );
         $bag->addArray($matches);
         $bag->addArray($this->c);
         $bag->addArray(
@@ -132,7 +145,6 @@ class RouteService
                 'router'  => $this->router,
             ]
         );
-        $dp = new Dispatcher($this->c);
         $dp->setNamedArgs($bag);
         $dp->setTypedArg('Ranyuen\Little\Request', $req);
         $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);

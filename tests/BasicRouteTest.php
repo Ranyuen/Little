@@ -211,6 +211,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     {
         $test = $this;
 
+        // Regex separator must not be /, use #, () or others.
         $r = new Router();
         $r->get('#/first/(.+?)/second/(?<third>.+)#', function ($matches, $third) use ($test) {
             $test->assertEquals('momonga', $matches[1]);
@@ -265,5 +266,22 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $res = $r->run($req);
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $res);
         $this->assertEquals(404, $res->getStatusCode());
+    }
+
+    public function testAssretAndDefaults()
+    {
+        $r = new Router();
+        $r->get('/:id?', function ($id = 42) {
+            return (string) $id;
+        })->assert('id', '/\d+/');
+
+        $req = Request::create('/index');
+        $res = $r->run($req);
+        $this->assertEquals(404, $res->getStatusCode());
+
+        $req = Request::create('/');
+        $res = $r->run($req);
+        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals('42', $res->getContent());
     }
 }

@@ -58,7 +58,6 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('blog index 2', $res->getContent());
 
         $req = Request::create('/blog/');
-        $req->query->set('page', 1);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('blog index 1', $res->getContent());
