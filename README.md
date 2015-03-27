@@ -32,4 +32,204 @@ Support PHP >=5.4 and latest HHVM.
 
 Example
 --
-See _tests/_ directory.
+For more details please see _tests/_ directory.
+
+For small Web pages.
+```php
+<?php
+require 'vendor/autoload.php';
+
+use Ranyuen\Little\Router;
+use Ranyuen\Little\Request;
+
+$r = new Router();
+
+$r->get('/', function () {
+    return 'Hello.';
+});
+
+$r->error(404, function () {
+  return 'Not Found';
+});
+
+$r->group('/blog', function ($r) {
+    $r->get('/:year/:month/:date', function ($year, $month, $date) {
+        return "View articles at $year-$month-$date.";
+    })
+        ->assert('year', '/\d{4}/')
+        ->assert('month', '/\d{1,2}/')
+        ->assert('date', '/\d{1,2}/');
+
+    $r->get('/category', function ($name = 'all') {
+        return "List articles in $name.";
+    });
+
+    $r->error(404, function ($req) {
+        return "{$req->getPathInfo()} is not found.";
+    });
+});
+
+$r->run(Request::createFromGlobals())->send();
+```
+
+For more large  pages we can use controller class.
+```php
+<?php
+require 'vendor/autoload.php';
+
+use Ranyuen\Little\Router;
+use Ranyuen\Little\Request;
+
+class IndexController {
+    public function index() {
+        return 'Hello.';
+    }
+
+    public function notFound() {
+        return 'Not Found';
+    }
+}
+
+class BlogController {
+    public function show($year, $month, $date) {
+        return "View articles at $year-$month-$date.";
+    }
+
+    public function category($name = 'all') {
+        return "List articles in $name.";
+    }
+
+    public function notFound($req) {
+        return "{$req->getPathInfo()} is not found.";
+    }
+}
+
+$r = new Router();
+$r->get('/', 'IndexController@index');
+$r->error(404, 'IndexController@notFound');
+$r->group('/blog', function ($r) {
+    $r->get('/:year/:month/:date', 'BlogController@show')
+        ->assert('year', '/\d{4}/')
+        ->assert('month', '/\d{1,2}/')
+        ->assert('date', '/\d{1,2}/');
+    $r->get('/category', 'BlogController@category');
+    $r->error(404, 'BlogController@notFound');
+});
+
+$r->run(Request::createFromGlobals())->send();
+```
+
+For complex pages config or annotations are useful.
+```php
+<?php
+require 'vendor/autoload.php';
+
+use Ranyuen\Di\Container;
+use Ranyuen\Little\Router;
+use Ranyuen\Little\Request;
+use Ranyuen\Little\Response;
+
+class IndexController {
+    /** @Route('/') */
+    public function index() {
+        return 'Hello.';
+    }
+
+    /** @Route(error=404) */
+    public function notFound() {
+        return 'Not Found';
+    }
+}
+
+/** @Route('/blog') */
+class BlogController {
+    /**
+     * @Inject
+     * @var PDO
+     */
+    private $db;
+    /** @Inject */
+    private $view;
+    /** @Inject */
+    private $auth;
+
+    /** @Route('/:year/:month/:date',assert={year:'/\d{4}/',month:'/\d{1,2}/',date:'/\d{1,2}/'}) */
+    public function show($year, $month, $date) {
+        return "View articles at $year-$month-$date.";
+    }
+
+    /** @Route('/category') */
+    public function category($name = 'all') {
+        return "List articles in $name.";
+    }
+
+    /** @Route('/edit/:id?') */
+    public function edit(Request $req, $id = 0) {
+        $this->auth($req);
+        return $this->view->render('blog/edit');
+    }
+
+    /** @Route('/save/:id',via=POST) */
+    public function save(Request $req, $id, $title, $content) {
+        $this->auth($req);
+        if (0 == $id) {
+            $statement = $this->db->prepare('INSERT INTO blog(title, content) VALUES (:title, :content)');
+        } else {
+            $statement = $this->db->prepare('UPDATE blog SET title = :title, content = :content WHERE id = :id');
+            $statement->bindParam('id', $id);
+        }
+        $statement->bindParam('title', $title);
+        $statement->bindParam('title', $content);
+        $statement->execute();
+        return new Response('', 303, ['Location' => '/blog/']);
+    }
+
+    /** @Route('/save/:id',via=DELETE) */
+    public function destroy(Request $req, $id) {
+        $this->auth($req);
+        $statement = $this->db->prepare('DELETE blog WHERE id = :id');
+        $statement->bindParam('id', $id);
+        $statement->execute();
+        return new Response('', 303, ['Location' => '/blog/']);
+    }
+
+    /** @Route(error=404) */
+    public function notFound(Request $req) {
+        return "{$req->getPathInfo()} is not found.";
+    }
+
+    /** @Route(error=403) */
+    public function forbidden() {
+        return new Response('', 403);
+    }
+
+    /** @Route(error=404) */
+    public function notFound(Request $req) {
+        return "{$req->getPathInfo()} is not found.";
+    }
+}
+
+$c = new Container();
+$c['db'] = function (Container $c) {
+    return new \PDO('mysql:host=localhost;dbname=rrrr;charset=utf8', 'user', 'password');
+};
+$c['view'] = function (Container $c) {
+    // Some template engine.
+};
+$c['auth'] = $c->protect(function (Request $req) {
+    // Some authentication logic.
+    if (success) {
+        return true;
+    }
+    throw new \Ranyuen\Little\Forbidden();
+});
+
+Router::plugin('Ranyuen\Little\Plugin\ControllerAnnotationRouter');
+$r = new Router($c);
+$r->registerController('IndexController');
+$r->registerController('BlogController');
+
+$req = Request::createFromGlobals();
+$res = $r->run($req);
+$res->send();
+```
