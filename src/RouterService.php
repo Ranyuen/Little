@@ -157,15 +157,7 @@ class RouterService
     public function findMatchedRoute($name, Request $req, $prefix = '')
     {
         if ($name) {
-            if (isset($this->namedRoutes[$name])) {
-                $dp = new Dispatcher($this->c);
-                $reqArray = new ParameterBag();
-                $reqArray->setRequest($req);
-                $dp->setNamedArgs($reqArray);
-
-                return new BoundRoute($this->namedRoutes[$name], $this->facade, $req, $dp);
-            }
-            return null;
+            return $this->findNamedRoute($name, $req, $prefix);
         }
         foreach ($this->routes as $route) {
             if ($route instanceof Route) {
@@ -254,6 +246,27 @@ class RouterService
         }
 
         return $this->parent->findErrorHandler($status);
+    }
+
+    private function findNamedRoute($name, Request $req, $prefix = '')
+    {
+        if (isset($this->namedRoutes[$name])) {
+            $dp = new Dispatcher($this->c);
+            $reqArray = new ParameterBag();
+            $reqArray->setRequest($req);
+            $dp->setNamedArgs($reqArray);
+
+            return new BoundRoute($this->namedRoutes[$name], $this->facade, $req, $dp);
+        }
+        foreach ($this->routes as $route) {
+            if (!(is_array($route) && $route[1] instanceof Router)) {
+                continue;
+            }
+            list($path, $router) = $route;
+            if ($route = $router->findMatchedRoute($name, $req, $prefix.$path)) {
+                return $route;
+            }
+        }
     }
 
     private function toResponse($obj)

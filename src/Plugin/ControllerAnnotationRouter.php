@@ -20,12 +20,12 @@ use Ranyuen\Little\RoutingPlugin;
  *     /** @Route('/blog') * /
  *     class BlogController {
  *         /**
- *          * @Route('/{page}',name=blog_index,assert={page='/\A\d+\z/'})
+ *          * @Route('/:page?',name=blog_index,assert={page='/\A\d+\z/'})
  *          * /
  *         public function index($page = 1) {
  *         }
  *
- *         /** @Route('/show/{id}') * /
+ *         /** @Route('/show/:id') * /
  *         public function show($id) {
  *         }
  *

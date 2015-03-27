@@ -29,9 +29,8 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
                     'map' => [
                         [
                             '/:page?',
-                            function ($page) { return "blog index $page"; },
+                            function ($page = 1) { return "blog index $page"; },
                             'assert'  => ['page' => '/\A\d+\z/'],
-                            'default' => ['page' => 1],
                             'name'    => 'blog_index',
                         ],
                         ['/show/:id', function (Router $r, Request $req) { return $r->error(404, $req); }],
@@ -63,9 +62,9 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('blog index 1', $res->getContent());
-        // $res = $r->run('blog_index', $req);
-        // $this->assertEquals(200, $res->getStatusCode());
-        // $this->assertEquals('blog index 1', $res->getContent());
+        $res = $r->run('blog_index', $req);
+        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals('blog index 1', $res->getContent());
 
         $req = Request::create('/blog/show/mOmonga');
         $res = $r->run($req);
