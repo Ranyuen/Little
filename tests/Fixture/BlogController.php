@@ -8,9 +8,9 @@ use Ranyuen\Little\Router;
  class BlogController
  {
      /**
-      * @Route('/:page',name=blog_index,assert={page='/\d+/'})
+      * @Route('/:page?',name=blog_index,assert={page='/\d+/'},default={page=1})
       */
-     public function index($page = 1)
+     public function index($page)
      {
          return "blog index $page";
      }

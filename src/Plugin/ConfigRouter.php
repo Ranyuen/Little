@@ -30,12 +30,12 @@ use Ranyuen\Little\RoutingPlugin;
  *             '/blog' => [
  *                 'map' => [
  *                     [
- *                         '/{page}',
+ *                         '/:page',
  *                         'BlogController@index',
  *                         'name'   => 'blog_index',
  *                         'assert' => ['page' => '/\A\d+\z/'],
  *                     ],
- *                     ['/show/{id}', 'BlogController@show'],
+ *                     ['/show/:id', 'BlogController@show'],
  *                 ],
  *                 'error' => [
  *                     404 => 'BlogController@notFound',

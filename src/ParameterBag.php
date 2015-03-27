@@ -75,11 +75,7 @@ class ParameterBag implements \ArrayAccess
                 return true;
             }
         }
-        if (!is_null($this->req->get($offset))) {
-            return true;
-        }
-
-        return false;
+        return !is_null($this->req->get($offset));
     }
 
     public function offsetGet($offset)
@@ -96,7 +92,7 @@ class ParameterBag implements \ArrayAccess
             return $var;
         }
 
-        return false;
+        return null;
     }
 
     public function offsetSet($offset, $value)

@@ -32,27 +32,21 @@ class RouterService
      */
     private $facade;
     /**
-     * Parent router.
-     *
-     * @var Router
-     */
-    private $parent;
-    /**
-     * Child routers.
-     *
-     * @var Router[]
-     */
-    private $childs = [];
-    /**
      * DI container.
      *
      * @var Container
      */
     private $c;
     /**
+     * Parent router.
+     *
+     * @var Router?
+     */
+    private $parent;
+    /**
      * Routes.
      *
-     * @var Route[]
+     * @var (Route|Router)[]
      */
     private $routes = [];
     /**
@@ -106,10 +100,10 @@ class RouterService
      */
     public function addGroup($path, Router $router)
     {
-        if (in_array($router, $this->childs, true)) {
+        if (in_array([$path, $router], $this->routes, true)) {
             return;
         }
-        $this->childs[$path] = $router;
+        $this->routes[] = [$path, $router];
         $router->registerParent($this->facade);
     }
 
@@ -135,21 +129,20 @@ class RouterService
      */
     public function run($name, Request $req)
     {
-        if ($route = $this->findMatchedRoute($name, $req)) {
-            try {
-                $res = $route->response();
-            } catch (\Exception $ex) {
-                return $route->runError(500, $ex);
-            }
-            $res = $this->toResponse($res);
-            if ('HEAD' === $req->getMethod()) {
-                $res->setContent('');
-            }
-
-            return $res;
+        if (!($route = $this->findMatchedRoute($name, $req))) {
+            return $this->runError(404, $req);
+        }
+        try {
+            $res = $route->response();
+        } catch (\Exception $ex) {
+            return $route->runError(500, $ex);
+        }
+        $res = $this->toResponse($res);
+        if ('HEAD' === $req->getMethod()) {
+            $res->setContent('');
         }
 
-        return $this->runError(404, $req);
+        return $res;
     }
 
     /**
@@ -159,7 +152,7 @@ class RouterService
      * @param Request $req    HTTP request.
      * @param string  $prefix URI prefix of the group.
      *
-     * @return RequestedRoute|null
+     * @return BoundRoute|null
      */
     public function findMatchedRoute($name, Request $req, $prefix = '')
     {
@@ -170,17 +163,19 @@ class RouterService
                 $reqArray->setRequest($req);
                 $dp->setNamedArgs($reqArray);
 
-                return new RequestedRoute($this->facade, $this->namedRoutes[$name], $req, $dp);
+                return new BoundRoute($this->namedRoutes[$name], $this->facade, $req, $dp);
             }
-        } else {
-            foreach ($this->routes as $route) {
+            return null;
+        }
+        foreach ($this->routes as $route) {
+            if ($route instanceof Route) {
                 if ($route = $route->matchRequest($req, $prefix)) {
                     return $route;
                 }
+                continue;
             }
-        }
-        foreach ($this->childs as $path => $child) {
-            if ($route = $child->findMatchedRoute($name, $req, $prefix.$path)) {
+            list($path, $router) = $route;
+            if ($route = $router->findMatchedRoute($name, $req, $prefix.$path)) {
                 return $route;
             }
         }
@@ -201,10 +196,9 @@ class RouterService
             return new Response((string) $ex, $status);
         }
         $dp = new Dispatcher($this->c);
-        $reqArray = new ParameterBag();
-        $reqArray->setRequest($req);
-        $dp->setNamedArgs($reqArray);
-        $dp->setNamedArgs(
+        $bag = new ParameterBag();
+        $bag->setRequest($req);
+        $bag->addArray(
             [
                 'e'         => $ex,
                 'ex'        => $ex,
@@ -216,6 +210,7 @@ class RouterService
                 'router'    => $this->facade,
             ]
         );
+        $dp->setNamedArgs($bag);
         $dp->setTypedArg('Exception', $ex);
         $dp->setTypedArg('Ranyuen\Little\Request', $req);
         $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);

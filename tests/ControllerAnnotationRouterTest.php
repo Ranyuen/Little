@@ -26,9 +26,12 @@ class ControllerAnnotationRouterTest extends PHPUnit_Framework_TestCase
 
         $req = Request::create('/blog/');
         $req->query->set('page', 1);
-        $res = $r->run('blog_index', $req);
+        $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals('blog index 1', $res->getContent());
+        // $res = $r->run('blog_index', $req);
+        // $this->assertEquals(200, $res->getStatusCode());
+        // $this->assertEquals('blog index 1', $res->getContent());
 
         $req = Request::create('/blog/show/mOmonga');
         $res = $r->run($req);

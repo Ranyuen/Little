@@ -11,7 +11,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
      *
      * @example
      *     $r = new Router;
-     *     $r->get('/user/{id}', function ($id) {
+     *     $r->get('/user/:id', function ($id) {
      *         return new Response("User of $id");
      *     });
      *     $r->run(Request::createFromGlobals())->send();

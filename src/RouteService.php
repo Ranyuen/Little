@@ -102,7 +102,7 @@ class RouteService
      * @param Request $req    HTTP request.
      * @param string  $prefix URI prefix of the group.
      *
-     * @return RequestedRoute|null
+     * @return BoundRoute|null When match this returns BoundRoute, else null.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -122,6 +122,8 @@ class RouteService
         }
         $bag = new ParameterBag();
         $bag->setRequest($req);
+        $bag->addArray($matches);
+        $bag->addArray($this->c);
         $bag->addArray(
             [
                 'matches' => $matches,
@@ -130,8 +132,6 @@ class RouteService
                 'router'  => $this->router,
             ]
         );
-        $bag->addArray($matches);
-        $bag->addArray($this->c);
         $dp = new Dispatcher($this->c);
         $dp->setNamedArgs($bag);
         $dp->setTypedArg('Ranyuen\Little\Request', $req);
@@ -143,7 +143,7 @@ class RouteService
             }
         }
 
-        return new RequestedRoute($this->router, $this->facade, $req, $dp);
+        return new BoundRoute($this->facade, $this->router, $req, $dp);
     }
 
     /**

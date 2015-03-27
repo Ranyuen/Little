@@ -17,20 +17,20 @@ use Ranyuen\Di\Dispatcher\Dispatcher;
  *
  * DCI roled Route :)
  */
-class RequestedRoute
+class BoundRoute
 {
-    /**
-     * Router that holds the route.
-     *
-     * @var Router
-     */
-    private $router;
     /**
      * Matched route.
      *
      * @var Route
      */
     private $route;
+    /**
+     * Router that holds the route.
+     *
+     * @var Router
+     */
+    private $router;
     /**
      * HTTP request.
      *
@@ -47,15 +47,15 @@ class RequestedRoute
     /**
      * Constructor.
      *
-     * @param Router     $router Router that holds the route.
      * @param Route      $route  Matched route.
+     * @param Router     $router Router that holds the route.
      * @param Request    $req    HTTP request.
      * @param Dispatcher $dp     DI container.
      */
-    public function __construct(Router $router, Route $route, Request $req, Dispatcher $dp)
+    public function __construct(Route $route, Router $router, Request $req, Dispatcher $dp)
     {
-        $this->router = $router;
         $this->route  = $route;
+        $this->router = $router;
         $this->req    = $req;
         $this->dp     = $dp;
     }
