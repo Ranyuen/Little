@@ -135,7 +135,12 @@ class RouterService
         try {
             $res = $route->response();
         } catch (\Exception $ex) {
-            return $route->runError(500, $ex);
+            if (defined(get_class($ex).'::HTTP_STATUS_CODE')) {
+                $statusCode = $ex::HTTP_STATUS_CODE;
+            } else {
+                $statusCode = 500;
+            }
+            return $route->runError($statusCode, $ex);
         }
         $res = $this->toResponse($res);
         if ('HEAD' === $req->getMethod()) {
@@ -215,13 +220,6 @@ class RouterService
             }
 
             return $this->runError(500, (string) $ex2);
-        }
-        if ($res instanceof \Exception) {
-            if (500 === $status) {
-                return new Response((string) $ex, 500);
-            }
-
-            return $this->runError(500, (string) $ex);
         }
         $res = $this->toResponse($res);
         $res->setStatusCode($status);
