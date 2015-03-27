@@ -36,8 +36,8 @@ class Router
         if (!class_exists($class)) {
             return;
         }
-        foreach ($class::getImplMethods() as $method) {
-            self::$plugins[$method] = $class;
+        foreach ((new \ReflectionClass($class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            self::$plugins[$method->name] = $class;
         }
     }
 

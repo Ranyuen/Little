@@ -46,11 +46,6 @@ use Ranyuen\Little\RoutingPlugin;
  */
 class ConfigRouter implements RoutingPlugin
 {
-    public static function getImplMethods()
-    {
-        return ['routeByConfig'];
-    }
-
     /**
      * Router.
      *

@@ -39,11 +39,6 @@ use Ranyuen\Little\RoutingPlugin;
  */
 class ControllerAnnotationRouter implements RoutingPlugin
 {
-    public static function getImplMethods()
-    {
-        return ['registerController'];
-    }
-
     /**
      * Router.
      *
