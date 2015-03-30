@@ -163,16 +163,21 @@ class BlogController {
         return "List articles in $name.";
     }
 
-    /** @Route('/edit/:id?') */
+    /**
+     * @Route('/edit/:id?')
+     * @Wrap('auth')
+     */
     public function edit(Request $req, $id = 0) {
-        $this->auth($req);
         return $this->view->render('blog/edit');
     }
 
-    /** @Route('/save/:id',via=POST) */
+    /**
+     * @Route('/save/:id',via=POST)
+     * @Wrap('auth')
+     */
     public function save(Request $req, $id, $title, $content) {
-        $this->auth($req);
-        if (0 == $id) {
+        $id = (int)$id;
+        if (0 === $id) {
             $statement = $this->db->prepare('INSERT INTO blog(title, content) VALUES (:title, :content)');
         } else {
             $statement = $this->db->prepare('UPDATE blog SET title = :title, content = :content WHERE id = :id');
@@ -184,18 +189,15 @@ class BlogController {
         return new Response('', 303, ['Location' => '/blog/']);
     }
 
-    /** @Route('/save/:id',via=DELETE) */
+    /**
+     * @Route('/save/:id',via=DELETE)
+     * @Wrap('auth')
+     */
     public function destroy(Request $req, $id) {
-        $this->auth($req);
         $statement = $this->db->prepare('DELETE blog WHERE id = :id');
         $statement->bindParam('id', $id);
         $statement->execute();
         return new Response('', 303, ['Location' => '/blog/']);
-    }
-
-    /** @Route(error=404) */
-    public function notFound(Request $req) {
-        return "{$req->getPathInfo()} is not found.";
     }
 
     /** @Route(error=403) */
@@ -216,12 +218,12 @@ $c['db'] = function (Container $c) {
 $c['view'] = function (Container $c) {
     // Some template engine.
 };
-$c['auth'] = $c->protect(function (Request $req) {
-    // Some authentication logic.
-    if (success) {
-        return true;
+$c['auth'] = $c->protect(function ($invocation, $args) {
+    $req = $args[0];
+    if (fail($req)) { // Some authentication logic.
+        throw new \Ranyuen\Little\Exception\Forbidden();
     }
-    throw new \Ranyuen\Little\Forbidden();
+    return call_user_func_array($invocation, $args);
 });
 
 Router::plugin('Ranyuen\Little\Plugin\ControllerAnnotationRouter');
