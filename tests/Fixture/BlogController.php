@@ -9,10 +9,11 @@ use Ranyuen\Little\Router;
  {
      /**
       * @Route('/:page?',name=blog_index,assert={page='/\d+/'})
+      * @Route('/:page?',via=POST,assert={page='/\d+/'})
       */
-     public function index($page = 1)
+     public function index(Request $req, $page = 1)
      {
-         return "blog index $page";
+         return "blog index {$req->getMethod()} $page";
      }
 
      /** @Route('/show/:id') */
@@ -27,9 +28,12 @@ use Ranyuen\Little\Router;
          return "POST $id";
      }
 
-     /** @Route(error=403) */
+     /**
+      * @Route(error=404)
+      * @Route(error={403,500})
+      */
      public function notFound()
      {
-         return 'blog 403';
+         return 'blog 404';
      }
  }

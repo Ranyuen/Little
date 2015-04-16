@@ -250,9 +250,19 @@ class RouterService
     {
         if (isset($this->namedRoutes[$name])) {
             $dp = new Dispatcher($this->c);
-            $reqArray = new ParameterBag();
-            $reqArray->setRequest($req);
-            $dp->setNamedArgs($reqArray);
+            $bag = new ParameterBag();
+            $bag->setRequest($req);
+            $bag->addArray(
+                [
+                    'req'     => $req,
+                    'request' => $req,
+                    'router'  => $this->facade,
+                ]
+            );
+            $dp->setNamedArgs($bag);
+            $dp->setTypedArg('Ranyuen\Little\Request', $req);
+            $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);
+            $dp->setTypedArg('Ranyuen\Little\Router', $this->facade);
 
             return new BoundRoute($this->namedRoutes[$name], $this->facade, $req, $dp);
         }

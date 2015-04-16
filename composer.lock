@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9cf654259be9e680aa2b30937f0a3738",
+    "hash": "f47d13b5f5f6085052052634e50092a8",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -220,16 +220,16 @@
         },
         {
             "name": "ranyuen/di",
-            "version": "0.2.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ranyuen/Di.git",
-                "reference": "3feb877a4def982a93ceca2947105167704df42b"
+                "reference": "13fd8ce63bb9e902b2f3d6a87ef17b45a237bc3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/3feb877a4def982a93ceca2947105167704df42b",
-                "reference": "3feb877a4def982a93ceca2947105167704df42b",
+                "url": "https://api.github.com/repos/Ranyuen/Di/zipball/13fd8ce63bb9e902b2f3d6a87ef17b45a237bc3f",
+                "reference": "13fd8ce63bb9e902b2f3d6a87ef17b45a237bc3f",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
                 "di",
                 "method invocation"
             ],
-            "time": "2015-03-30 06:18:08"
+            "time": "2015-03-30 10:53:13"
         },
         {
             "name": "symfony/http-foundation",
@@ -2045,6 +2045,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "hafriedlander/php-peg": 20,
+        "ranyuen/di": 20,
         "fabpot/php-cs-fixer": 20
     },
     "prefer-stable": false,

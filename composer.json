@@ -14,7 +14,7 @@
     "require": {
         "php": ">=5.4",
         "hafriedlander/php-peg": "dev-master@dev",
-        "ranyuen/di": "~0.2",
+        "ranyuen/di": "dev-master@dev",
         "symfony/http-foundation": "~2.6"
     },
     "require-dev": {

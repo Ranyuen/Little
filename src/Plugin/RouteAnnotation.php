@@ -44,8 +44,8 @@ class RouteAnnotation extends Annotation
     public function getRoutes(\ReflectionClass $class)
     {
         $routes = [];
-        foreach ($class->getMethods() as $method) {
-            $routes = $this->fetchRoute($class, $method, $routes);
+        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            $routes = $this->fetchRoutes($class, $method, $routes);
         }
         if ($group = $this->getGroup($class)) {
             $routes = ['group' => [$group => $routes]];
@@ -54,28 +54,36 @@ class RouteAnnotation extends Annotation
         return $routes;
     }
 
-    private function fetchRoute(\ReflectionClass $class, \ReflectionMethod $method, array $routes)
+    private function fetchRoutes(\ReflectionClass $class, \ReflectionMethod $method, array $routes)
     {
-        if (!($route = $this->getValues($method, 'Route'))) {
+        if (!($vals = $this->getEachValue($method, 'Route'))) {
             return $routes;
         }
-        if (isset($route[0])) {
-            $path = $route[0];
+        foreach ($vals as $val) {
+            $routes = $this->mergeValue($routes, $val, $class, $method);
+        }
+        return $routes;
+    }
+
+    private function mergeValue($routes, $val, $class, $method)
+    {
+        if (isset($val[0])) {
+            $path = $val[0];
             $routes['map'][] = [$path, "$class->name@$method->name"];
             foreach (['via', 'name', 'assert'] as $key) {
-                if (isset($route[$key])) {
-                    $routes['map'][count($routes['map']) - 1][$key] = $route[$key];
+                if (isset($val[$key])) {
+                    $routes['map'][count($routes['map']) - 1][$key] = $val[$key];
                 }
             }
         }
-        if (isset($route['error'])) {
-            if (is_array($route['error'])) {
-                foreach ($route['error'] as $status) {
+        if (isset($val['error'])) {
+            if (is_array($val['error'])) {
+                foreach ($val['error'] as $status) {
                     $routes['error'][intval($status)]
                         = "$class->name@$method->name";
                 }
             } else {
-                $routes['error'][intval($route['error'])]
+                $routes['error'][intval($val['error'])]
                     = "$class->name@$method->name";
             }
         }
