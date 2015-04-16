@@ -12,6 +12,7 @@ namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
 use Ranyuen\Di\Dispatcher\Dispatcher;
+use Ranyuen\Little\Exception\HttpRedirectException;
 
 /**
  * Router service.
@@ -134,6 +135,8 @@ class RouterService
         }
         try {
             $res = $route->response();
+        } catch (HttpRedirectException $ex) {
+            $res = new Response('', $ex::HTTP_STATUS_CODE, ['Location' => $ex->location]);
         } catch (\Exception $ex) {
             if (defined(get_class($ex).'::HTTP_STATUS_CODE')) {
                 $statusCode = $ex::HTTP_STATUS_CODE;
