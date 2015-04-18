@@ -25,6 +25,12 @@ class RouterService
      * @var array [error status=>controller]
      */
     public $errorHandlers = [];
+    /**
+     * StackPHP middleware class names.
+     *
+     * @var string[]
+     */
+    public $stacks = [];
 
     /**
      * Facade.
@@ -249,6 +255,39 @@ class RouterService
         return $this->parent->findErrorHandler($status);
     }
 
+    /**
+     * Convert any value to a Response.
+     *
+     * @param mixed $val Any value.
+     *
+     * @return Response
+     */
+    public function toResponse($val)
+    {
+        if ($val instanceof Response) {
+            return $val;
+        }
+        if (is_int($val)) {
+            return new Response('', $val);
+        }
+
+        return new Response((string) $val, 200);
+    }
+
+    /**
+     * Get StackPHP middlewares.
+     *
+     * @return string[]
+     */
+    public function getStacks()
+    {
+        $stacks = $this->stacks;
+        if ($this->parent) {
+            $stacks = array_merge($this->parent->getStacks(), $stacks);
+        }
+        return $stacks;
+    }
+
     private function findNamedRoute($name, Request $req, $prefix = '')
     {
         if (isset($this->namedRoutes[$name])) {
@@ -278,17 +317,5 @@ class RouterService
                 return $route;
             }
         }
-    }
-
-    private function toResponse($obj)
-    {
-        if ($obj instanceof Response) {
-            return $obj;
-        }
-        if (is_int($obj)) {
-            return new Response('', $obj);
-        }
-
-        return new Response((string) $obj, 200);
     }
 }

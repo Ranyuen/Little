@@ -11,13 +11,15 @@
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Dispatcher\Dispatcher;
+use Ranyuen\Little\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * HTTP Requested Route.
  *
  * DCI roled Route :)
  */
-class BoundRoute
+class BoundRoute implements HttpKernelInterface
 {
     /**
      * Matched route.
@@ -70,8 +72,11 @@ class BoundRoute
     public function response(array $vars = [])
     {
         $this->dp->setNamedArgs($vars);
-
-        return $this->route->response($this->dp);
+        $app = $this;
+        foreach (array_reverse($this->router->getStacks()) as $stackClass) {
+            $app = new $stackClass($app);
+        }
+        return $app->handle($this->req);
     }
 
     /**
@@ -86,4 +91,28 @@ class BoundRoute
     {
         return $this->router->runError($status, $this->req, $ex);
     }
+
+    // @codingStandardsIgnoreStart
+    /**
+     * Handles a Request to convert it to a Response.
+     *
+     * When $catch is true, the implementation must catch all exceptions
+     * and do its best to convert them to a Response instance.
+     *
+     * @param Request $req   A Request instance
+     * @param int     $type  The type of the request
+     *                       (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
+     * @param bool    $catch Whether to catch exceptions or not
+     *
+     * @return Response A Response instance
+     *
+     * @throws \Exception When an Exception occurs during processing
+     *
+     * @SuppressWarnings(PHPMD)
+     */
+    public function handle(Request $req, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    {
+        return $this->router->toResponse($this->route->response($this->dp));
+    }
+    // @codingStandardsIgnoreEnd
 }

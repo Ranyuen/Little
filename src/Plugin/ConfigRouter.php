@@ -87,10 +87,6 @@ class ConfigRouter implements RoutingPlugin
     private function map(array $config)
     {
         foreach ($config as $val) {
-            if (!is_array($val)) {
-                $this->router->get($path, $val);
-                continue;
-            }
             list($path, $controller) = $val;
             $route = $this->router->map($path, $controller);
             if (isset($val['via'])) {

@@ -156,6 +156,19 @@ class Router
     }
 
     /**
+     * Add a StackPHP middleware.
+     *
+     * @param string $middleware Class name.
+     *
+     * @return this
+     */
+    public function stack($middleware)
+    {
+        $this->service->stacks[] = $middleware;
+        return $this;
+    }
+
+    /**
      * Run request handler.
      *
      * Run metched handler.

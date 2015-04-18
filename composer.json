@@ -15,7 +15,8 @@
         "php": ">=5.4",
         "hafriedlander/php-peg": "dev-master@dev",
         "ranyuen/di": "dev-master@dev",
-        "symfony/http-foundation": "~2.6"
+        "symfony/http-foundation": "~2.6",
+        "symfony/http-kernel": "~2.6"
     },
     "require-dev": {
         "fabpot/php-cs-fixer": "~2.0@dev",
