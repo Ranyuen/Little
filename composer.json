@@ -2,7 +2,7 @@
     "name": "ranyuen/little",
     "description": "Request-Route-Ракушки-Response",
     "keywords": ["microframework", "rest", "router", "website"],
-    "version": "0.0.1",
+    "version": "0.1.2",
     "license": "GPL-3.0+",
     "authors": [
         {
@@ -14,7 +14,7 @@
     "require": {
         "php": ">=5.4",
         "hafriedlander/php-peg": "dev-master@dev",
-        "ranyuen/di": "dev-master@dev",
+        "ranyuen/di": "~0.2",
         "symfony/http-foundation": "~2.6",
         "symfony/http-kernel": "~2.6"
     },
