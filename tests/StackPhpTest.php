@@ -26,4 +26,17 @@ class StackPhpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals(' b1 b2 b3 /g/ a3 a2 a1', $res->getContent());
     }
+
+    public function testStackAnnotation()
+    {
+        Router::plugin('Ranyuen\Little\Plugin\ControllerAnnotationRouter');
+        $r = new Router();
+        $r->stack('Fixture\FirstMiddleware');
+        $r->stack('Fixture\SecondMiddleware');
+        $r->registerController('Fixture\StackController');
+
+        $res = $r->run(Request::create('/g/'));
+        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals(' b1 b2 b3 /g/ a3 a2 a1', $res->getContent());
+    }
 }

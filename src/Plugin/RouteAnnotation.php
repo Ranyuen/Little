@@ -22,7 +22,7 @@ class RouteAnnotation extends Annotation
      *
      * @param \ReflectionClass $class Controller class.
      *
-     * @return string|null
+     * @return array|null
      */
     public function getGroup(\ReflectionClass $class)
     {
@@ -31,7 +31,7 @@ class RouteAnnotation extends Annotation
             return;
         }
 
-        return $group[0];
+        return $group;
     }
 
     /**
@@ -48,7 +48,18 @@ class RouteAnnotation extends Annotation
             $routes = $this->fetchRoutes($class, $method, $routes);
         }
         if ($group = $this->getGroup($class)) {
-            $routes = ['group' => [$group => $routes]];
+            $routes = [
+                'group' => [
+                    $group[0] => $routes,
+                ],
+            ];
+            if (isset($group['stack'])) {
+                if (!is_array($group['stack'])) {
+                    $routes['group'][$group[0]]['stack'] = [$group['stack']];
+                } else {
+                    $routes['group'][$group[0]]['stack'] = $group['stack'];
+                }
+            }
         }
 
         return $routes;

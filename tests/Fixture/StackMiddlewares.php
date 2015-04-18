@@ -58,3 +58,13 @@ class ThirdMiddleware implements HttpKernelInterface
         return $res;
     }
 }
+
+/** @Route('/g', stack={'Fixture\ThirdMiddleware'}) */
+class StackController
+{
+    /** @Route('/') */
+    public function index($req)
+    {
+        return $req->query->get('content', '').' /g/';
+    }
+}

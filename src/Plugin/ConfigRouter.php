@@ -40,6 +40,7 @@ use Ranyuen\Little\RoutingPlugin;
  *                 'error' => [
  *                     404 => 'BlogController@notFound',
  *                 ],
+ *                 'stack' => ['Middleware'],
  *             ],
  *         ],
  *     ]);
@@ -74,6 +75,9 @@ class ConfigRouter implements RoutingPlugin
                     break;
                 case 'error':
                     $this->error($val);
+                    break;
+                case 'stack':
+                    $this->stack($val);
                     break;
                 case 'group':
                     $this->group($val);
@@ -120,6 +124,13 @@ class ConfigRouter implements RoutingPlugin
                 continue;
             }
             $this->router->error($status, $controller);
+        }
+    }
+
+    private function stack(array $config)
+    {
+        foreach ($config as $middleware) {
+            $this->router->stack($middleware);
         }
     }
 
