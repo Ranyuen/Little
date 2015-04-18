@@ -267,9 +267,9 @@ class RouterService
         if ($val instanceof Response) {
             return $val;
         }
-        if (is_int($val)) {
-            return new Response('', $val);
-        }
+        // if (is_int($val)) {
+        //     return new Response('', $val);
+        // }
 
         return new Response((string) $val, 200);
     }

@@ -23,9 +23,6 @@ class StackPhpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(' b1 b2 / a2 a1', $res->getContent());
 
         $res = $r->run(Request::create('/g/'));
-        if ($res->getStatusCode() !== 200) {
-            echo $res->getContent();
-        }
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertEquals(' b1 b2 b3 /g/ a3 a2 a1', $res->getContent());
     }
