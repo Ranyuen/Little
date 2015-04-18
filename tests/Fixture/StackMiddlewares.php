@@ -1,7 +1,8 @@
 <?php
 namespace Fixture;
 
-use Ranyuen\Little\Request;
+// use Ranyuen\Little\Request;
+use Symfony\Component\HttpFoundation\Request; // HHVM can't understand class_alias() when chaking interfaces.
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class FirstMiddleware implements HttpKernelInterface
