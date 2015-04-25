@@ -244,7 +244,7 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $req = Request::create('/basic/42', 'PUT', ['id' => 41, 'name' => 'mOmonga']);
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
-        $this->assertEquals('mOmonga 42', $res->getContent());
+        $this->assertEquals('mOmonga 41', $res->getContent());
     }
 
     /**
