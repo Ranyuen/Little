@@ -2,7 +2,7 @@
     "name": "ranyuen/little",
     "description": "Request-Route-Ракушки-Response",
     "keywords": ["microframework", "rest", "router", "website"],
-    "version": "0.1.2",
+    "version": "0.1.3",
     "license": "GPL-3.0+",
     "authors": [
         {
