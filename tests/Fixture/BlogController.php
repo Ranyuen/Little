@@ -1,4 +1,5 @@
 <?php
+
 namespace Fixture;
 
 use Ranyuen\Little\Request;

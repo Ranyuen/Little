@@ -4,10 +4,13 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 /**
@@ -46,8 +49,8 @@ class ParameterBag implements \ArrayAccess
         if (is_array($array)) {
             $this->array = array_merge($this->array, $array);
         } else {
-            if (!($array instanceof \ArrayAccess)) {
-                throw new Exception('Not an array: '.(string) $array);
+            if (! ($array instanceof \ArrayAccess)) {
+                throw new Exception('Not an array: '. (string) $array);
             }
             $this->arrays[] = $array;
         }
@@ -75,7 +78,7 @@ class ParameterBag implements \ArrayAccess
                 return true;
             }
         }
-        return !is_null($this->req->get($offset));
+        return ! is_null($this->req->get($offset));
     }
 
     public function offsetGet($offset)
@@ -88,7 +91,8 @@ class ParameterBag implements \ArrayAccess
                 return $array[$offset];
             }
         }
-        if (!is_null($var = $this->req->get($offset))) {
+        $var = $this->req->get($offset);
+        if (! is_null($var)) {
             return $var;
         }
 

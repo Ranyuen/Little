@@ -4,7 +4,7 @@ use Ranyuen\Little\Request;
 use Ranyuen\Little\Response;
 use Ranyuen\Little\Router;
 
-class BasicRouteTest extends PHPUnit_Framework_TestCase
+class BasicRouteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Basic micro routing.
@@ -19,7 +19,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testBasicRoute()
     {
         $r = new Router();
-        $r->get('/basic/', function () { return new Response('basic'); });
+        $r->get('/basic/', function () {
+            return new Response('basic');
+        });
 
         $req = Request::create('/basic/');
         $res = $r->run($req);
@@ -37,12 +39,24 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testRouteMethod()
     {
         $r = new Router();
-        $r->get('/basic', function () { return new Response('GET'); });
-        $r->post('/basic', function () { return new Response('POST'); });
-        $r->put('/basic', function () { return new Response('PUT'); });
-        $r->delete('/basic', function () { return new Response('DELETE'); });
-        $r->options('/basic', function () { return new Response('OPTIONS'); });
-        $r->patch('/basic', function () { return new Response('PATCH'); });
+        $r->get('/basic', function () {
+            return new Response('GET');
+        });
+        $r->post('/basic', function () {
+            return new Response('POST');
+        });
+        $r->put('/basic', function () {
+            return new Response('PUT');
+        });
+        $r->delete('/basic', function () {
+            return new Response('DELETE');
+        });
+        $r->options('/basic', function () {
+            return new Response('OPTIONS');
+        });
+        $r->patch('/basic', function () {
+            return new Response('PATCH');
+        });
         $req = Request::create('/basic');
         $res = $r->run($req);
         $this->assertEquals(200, $res->getStatusCode());
@@ -79,7 +93,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testVia()
     {
         $r = new Router();
-        $r->map('/', function () { return new Response('via'); })
+        $r->map('/', function () {
+            return new Response('via');
+        })
             ->via('POST', 'PUT', 'PATCH');
 
         $req = Request::create('/');
@@ -116,7 +132,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testNamedRoute()
     {
         $r = new Router();
-        $r->get('/named', function () { return new Response('named'); })
+        $r->get('/named', function () {
+            return new Response('named');
+        })
             ->name('named');
         $req = Request::create('/noname');
 
@@ -128,7 +146,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('named', $res->getContent());
 
         $r = new Router();
-        $r->get('/named/:id', function ($id) { return new Response("named $id"); })
+        $r->get('/named/:id', function ($id) {
+            return new Response("named $id");
+        })
             ->name('named');
         $req = Request::create('/noname');
         $req->query->set('id', 42);
@@ -148,7 +168,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testMethodOverride()
     {
         $r = new Router();
-        $r->patch('/override', function () { return new Response('PATCH'); });
+        $r->patch('/override', function () {
+            return new Response('PATCH');
+        });
 
         $req = Request::create('/override', 'POST');
         $res = $r->run($req);
@@ -253,7 +275,9 @@ class BasicRouteTest extends PHPUnit_Framework_TestCase
     public function testAutoResponse()
     {
         $r = new Router();
-        $r->delete('/basic', function () { return 'mOmonga'; });
+        $r->delete('/basic', function () {
+            return 'mOmonga';
+        });
         $req = Request::create('/basic', 'DELETE');
         $res = $r->run($req);
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $res);

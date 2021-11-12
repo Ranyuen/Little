@@ -4,18 +4,21 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little\Plugin;
 
-use Ranyuen\Di\Reflection\Annotation;
+use Ranyuen\Di\Reflection\AbstractAnnotation;
 
 /**
  * Route annotation.
  */
-class RouteAnnotation extends Annotation
+class RouteAnnotation extends AbstractAnnotation
 {
     /**
      * Get routing group path of the controller.
@@ -27,7 +30,7 @@ class RouteAnnotation extends Annotation
     public function getGroup(\ReflectionClass $class)
     {
         $group = $this->getValues($class, 'Route');
-        if (!isset($group[0])) {
+        if (! isset($group[0])) {
             return;
         }
 
@@ -47,14 +50,15 @@ class RouteAnnotation extends Annotation
         foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             $routes = $this->fetchRoutes($class, $method, $routes);
         }
-        if ($group = $this->getGroup($class)) {
+        $group = $this->getGroup($class);
+        if ($group) {
             $routes = [
                 'group' => [
                     $group[0] => $routes,
                 ],
             ];
             if (isset($group['stack'])) {
-                if (!is_array($group['stack'])) {
+                if (! is_array($group['stack'])) {
                     $routes['group'][$group[0]]['stack'] = [$group['stack']];
                 } else {
                     $routes['group'][$group[0]]['stack'] = $group['stack'];
@@ -67,7 +71,8 @@ class RouteAnnotation extends Annotation
 
     private function fetchRoutes(\ReflectionClass $class, \ReflectionMethod $method, array $routes)
     {
-        if (!($vals = $this->getEachValue($method, 'Route'))) {
+        $vals = $this->getEachValue($method, 'Route');
+        if (! ($vals)) {
             return $routes;
         }
         foreach ($vals as $val) {

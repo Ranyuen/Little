@@ -4,7 +4,7 @@ use Ranyuen\Little\Request;
 use Ranyuen\Little\Response;
 use Ranyuen\Little\Router;
 
-class ErrorRouteTest extends PHPUnit_Framework_TestCase
+class ErrorRouteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      */
@@ -57,7 +57,9 @@ class ErrorRouteTest extends PHPUnit_Framework_TestCase
     public function testNotFound()
     {
         $r = new Router();
-        $r->error(404, function () { return 'Not Found'; });
+        $r->error(404, function () {
+            return 'Not Found';
+        });
         $req = Request::create('/');
         $res = $r->run($req);
         $this->assertEquals(404, $res->getStatusCode());

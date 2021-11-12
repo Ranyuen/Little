@@ -1,5 +1,5 @@
-Test
-==
+# Test
+
 ```sh
 vendor/bin/phing
 ```

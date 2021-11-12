@@ -4,16 +4,19 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little\Exception;
 
 /**
  * HTTP 307 redirect.
  */
-class TemporaryRedirect extends HttpRedirectException
+class TemporaryRedirect extends AbstractHttpRedirectException
 {
-    const HTTP_STATUS_CODE = 307;
+    public const HTTP_STATUS_CODE = 307;
 }

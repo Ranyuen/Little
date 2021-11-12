@@ -3,13 +3,15 @@
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class RouteConditionTest extends PHPUnit_Framework_TestCase
+class RouteConditionTest extends \PHPUnit\Framework\TestCase
 {
     public function testRouteCondition()
     {
         $test = $this;
         $r = new Router();
-        $r->get('/:id', function () { return ''; })
+        $r->get('/:id', function () {
+            return '';
+        })
             ->assert(function ($req, $request, Request $q, $router, Router $r, $id) use ($test) {
                 $test->assertInstanceOf('Ranyuen\Little\Request', $req);
                 $test->assertInstanceOf('Ranyuen\Little\Request', $request);
@@ -32,7 +34,9 @@ class RouteConditionTest extends PHPUnit_Framework_TestCase
     public function testParamCondition()
     {
         $r = new Router();
-        $r->get('/:id', function () { return ''; })
+        $r->get('/:id', function () {
+            return '';
+        })
             ->assert('id', '42');
 
         $req = Request::create('/42');
@@ -44,7 +48,9 @@ class RouteConditionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(404, $res->getStatusCode());
 
         $r = new Router();
-        $r->get('/:id', function () { return ''; })
+        $r->get('/:id', function () {
+            return '';
+        })
             ->assert('id', '/\A\d+\z/');
 
         $req = Request::create('/42');

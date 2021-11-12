@@ -1,12 +1,13 @@
 <?php
+
 require_once 'tests/Fixture/BlogController.php';
 
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class ControllerAnnotationRouterTest extends PHPUnit_Framework_TestCase
+class ControllerAnnotationRouterTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         $prop = new \ReflectionProperty('Ranyuen\Little\Router', 'plugins');
         $prop->setAccessible(true);

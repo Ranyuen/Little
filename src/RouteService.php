@@ -4,10 +4,13 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
@@ -91,7 +94,7 @@ class RouteService
             return;
         }
         $this->methods[] = $method;
-        if ('GET' === $method) {
+        if ($method === 'GET') {
             $this->addMethod('HEAD');
         }
     }
@@ -108,16 +111,16 @@ class RouteService
      */
     public function matchRequest(Request $req, $prefix = '')
     {
-        if (!in_array($req->getMethod(), $this->methods)) {
+        if (! in_array($req->getMethod(), $this->methods)) {
             return;
         }
-        if ('/' !== substr($this->rawPath, 0, 1) && Dispatcher::isRegex($this->rawPath)) {
+        if (substr($this->rawPath, 0, 1) !== '/' && Dispatcher::isRegex($this->rawPath)) {
             preg_match('#\A(.)(.*)(.[imsxeADSUXJu]*)\z#', $this->rawPath, $matches);
             $compiledPath = $matches[1].'\A(?:'.preg_quote($prefix, $matches[1]).')'.$matches[2].'\z'.$matches[3];
         } else {
             $compiledPath = (new PathCompiler($prefix.$this->rawPath))->compile();
         }
-        if (!preg_match($compiledPath, $req->getPathInfo(), $matches)) {
+        if (! preg_match($compiledPath, $req->getPathInfo(), $matches)) {
             return;
         }
         $dp = new Dispatcher($this->c);
@@ -150,7 +153,7 @@ class RouteService
         $dp->setTypedArg('Symfony\Component\HttpFoundation\Request', $req);
         $dp->setTypedArg('Ranyuen\Little\Router', $this->router);
         foreach ($this->conditions as $cond) {
-            if (!$cond->isMatch($bag, $dp)) {
+            if (! $cond->isMatch($bag, $dp)) {
                 return;
             }
         }

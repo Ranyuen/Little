@@ -4,10 +4,13 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Dispatcher\Dispatcher;
@@ -91,11 +94,11 @@ class RouteCondition
         if (is_null($value)) {
             return false;
         }
-        if (!Dispatcher::isRegex($this->pattern)) {
+        if (! Dispatcher::isRegex($this->pattern)) {
             return $this->pattern === $value;
         }
         $value = (string) $value;
 
-        return !!preg_match($this->pattern, $value, $m) && $m[0] === $value;
+        return ! ! preg_match($this->pattern, $value, $m) && $m[0] === $value;
     }
 }
