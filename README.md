@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/Ranyuen/Little.svg)](https://travis-ci.org/Ranyuen/Little)
 [![HHVM Status](http://hhvm.h4cc.de/badge/ranyuen/little.svg)](http://hhvm.h4cc.de/package/ranyuen/little)
 
-Ranyuen/Little
-==
+# Ranyuen/Little
+
 Request-Route-Ракушки-Response
 
 No model, no view, no controller, no MVC.<br/>
@@ -16,25 +16,26 @@ _cf._ [codeguy/Slim](http://www.slimframework.com/)
 
 _cf._ [silexphp/Silex](http://silex.sensiolabs.org/)
 
-Features
---
+## Features
+
 1. Simple routing API like every micro WAFs.
 2. DI/AOP support with Ranyuen/Di.
 3. Pluggable routing logic.
 
-Install
---
+## Install
+
 ```sh
 composer require ranyuen/little
 ```
 
-Support PHP >=5.4 and latest HHVM.
+Support PHP >=7.4.
 
-Example
---
+## Example
+
 For more details please see _tests/_ directory.
 
 For small Web pages.
+
 ```php
 <?php
 require 'vendor/autoload.php';
@@ -72,7 +73,8 @@ $r->group('/blog', function ($r) {
 $r->run(Request::createFromGlobals())->send();
 ```
 
-For more large  pages we can use controller class.
+For more large pages we can use controller class.
+
 ```php
 <?php
 require 'vendor/autoload.php';
@@ -120,6 +122,7 @@ $r->run(Request::createFromGlobals())->send();
 ```
 
 For complex pages config or annotations are useful.
+
 ```php
 <?php
 require 'vendor/autoload.php';

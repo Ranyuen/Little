@@ -4,10 +4,13 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
@@ -116,7 +119,7 @@ class Route
      */
     public function assert()
     {
-        if (1 === func_num_args()) {
+        if (func_num_args() === 1) {
             $cond = RouteCondition::createFromInvokable(func_get_arg(0));
         } else {
             $cond = RouteCondition::createFromPattern(func_get_arg(0), func_get_arg(1));

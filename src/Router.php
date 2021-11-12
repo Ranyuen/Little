@@ -4,10 +4,13 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
@@ -33,7 +36,7 @@ class Router
      */
     public static function plugin($class)
     {
-        if (!class_exists($class)) {
+        if (! class_exists($class)) {
             return;
         }
         foreach ((new \ReflectionClass($class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
@@ -61,7 +64,7 @@ class Router
      */
     public function __construct(Container $c = null)
     {
-        if (!$c) {
+        if (! $c) {
             $c = new Container();
         }
         $this->service = new RouterService($this, $c);
@@ -144,7 +147,7 @@ class Router
      */
     public function group($path, $router)
     {
-        if (!($router instanceof self)) {
+        if (! ($router instanceof self)) {
             $r = new self($this->c);
             $router($r);
 

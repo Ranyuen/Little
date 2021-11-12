@@ -5,17 +5,21 @@ require 'Fixture/StackMiddlewares.php';
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class StackPhpTest extends PHPUnit_Framework_TestCase
+class StackPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testStack()
     {
         $r = new Router();
         $r->stack('Fixture\FirstMiddleware');
         $r->stack('Fixture\SecondMiddleware');
-        $r->get('/', function ($req) { return $req->query->get('content', '').' /'; });
+        $r->get('/', function ($req) {
+            return $req->query->get('content', '').' /';
+        });
         $r->group('/g', function ($r) {
             $r->stack('Fixture\ThirdMiddleware');
-            $r->get('/', function ($req) { return $req->query->get('content', '').' /g/'; });
+            $r->get('/', function ($req) {
+                return $req->query->get('content', '').' /g/';
+            });
         });
 
         $res = $r->run(Request::create('/'));

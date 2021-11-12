@@ -4,9 +4,9 @@ use Ranyuen\Little\Plugin\ConfigRouter;
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class ConfigRouterTest extends PHPUnit_Framework_TestCase
+class ConfigRouterTest extends \PHPUnit\Framework\TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         $prop = new \ReflectionProperty('Ranyuen\Little\Router', 'plugins');
         $prop->setAccessible(true);
@@ -19,24 +19,34 @@ class ConfigRouterTest extends PHPUnit_Framework_TestCase
         $r = new Router();
         $r->routeByConfig([
             'map' => [
-                ['/', function () { return 'index'; }],
+                ['/', function () {
+                    return 'index';
+                }],
             ],
             'error' => [
-                500 => function () { return 'index 500'; },
+                500 => function () {
+                    return 'index 500';
+                },
             ],
             'group' => [
                 '/blog' => [
                     'map' => [
                         [
                             '/:page?',
-                            function ($page = 1) { return "blog index $page"; },
+                            function ($page = 1) {
+                                return "blog index $page";
+                            },
                             'assert'  => ['page' => '/\A\d+\z/'],
                             'name'    => 'blog_index',
                         ],
-                        ['/show/:id', function (Router $r, Request $req) { return $r->error(404, $req); }],
+                        ['/show/:id', function (Router $r, Request $req) {
+                            return $r->error(404, $req);
+                        }],
                     ],
                     'error' => [
-                        404 => function () { return 'blog 404'; },
+                        404 => function () {
+                            return 'blog 404';
+                        },
                     ],
                 ],
             ],

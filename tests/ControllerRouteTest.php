@@ -1,4 +1,5 @@
 <?php
+
 require_once 'tests/Fixture/Momonga.php';
 require_once 'tests/Fixture/MomongaController.php';
 
@@ -7,7 +8,7 @@ use Ranyuen\Di\Container;
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class ControllerRouteTest extends PHPUnit_Framework_TestCase
+class ControllerRouteTest extends \PHPUnit\Framework\TestCase
 {
     public function testRouteToController()
     {

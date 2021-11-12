@@ -4,15 +4,18 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little;
 
 use Ranyuen\Di\Container;
 use Ranyuen\Di\Dispatcher\Dispatcher;
-use Ranyuen\Little\Exception\HttpRedirectException;
+use Ranyuen\Little\Exception\AbstractHttpRedirectException;
 
 /**
  * Router service.
@@ -136,12 +139,13 @@ class RouterService
      */
     public function run($name, Request $req)
     {
-        if (!($route = $this->findMatchedRoute($name, $req))) {
+        $route = $this->findMatchedRoute($name, $req);
+        if (! ($route)) {
             return $this->runError(404, $req);
         }
         try {
             $res = $route->response();
-        } catch (HttpRedirectException $ex) {
+        } catch (AbstractHttpRedirectException $ex) {
             $res = new Response('', $ex::HTTP_STATUS_CODE, ['Location' => $ex->location]);
         } catch (\Exception $ex) {
             if (defined(get_class($ex).'::HTTP_STATUS_CODE')) {
@@ -152,7 +156,7 @@ class RouterService
             return $route->runError($statusCode, $ex);
         }
         $res = $this->toResponse($res);
-        if ('HEAD' === $req->getMethod()) {
+        if ($req->getMethod() === 'HEAD') {
             $res->setContent('');
         }
 
@@ -175,13 +179,15 @@ class RouterService
         }
         foreach ($this->routes as $route) {
             if ($route instanceof Route) {
-                if ($route = $route->matchRequest($req, $prefix)) {
+                $route = $route->matchRequest($req, $prefix);
+                if ($route) {
                     return $route;
                 }
                 continue;
             }
             list($path, $router) = $route;
-            if ($route = $router->findMatchedRoute($name, $req, $prefix.$path)) {
+            $route = $router->findMatchedRoute($name, $req, $prefix.$path);
+            if ($route) {
                 return $route;
             }
         }
@@ -198,8 +204,10 @@ class RouterService
      */
     public function runError($status, Request $req, \Exception $ex = null)
     {
-        if (!($handler = $this->findErrorHandler($status))) {
-            return new Response((string) $ex, $status);
+        $handler = $this->findErrorHandler($status);
+        if (! ($handler)) {
+            $strEx= (string) $ex;
+            return new Response($strEx, $status);
         }
         $dp = new Dispatcher($this->c);
         $bag = new ParameterBag();
@@ -224,8 +232,9 @@ class RouterService
         try {
             $res = $dp->invoke($handler);
         } catch (\Exception $ex2) {
-            if (500 === $status) {
-                return new Response((string) $ex2, 500);
+            if ($status === 500) {
+                $strEx2= (string) $ex2;
+                return new Response($strEx2, 500);
             }
 
             return $this->runError(500, (string) $ex2);
@@ -248,7 +257,7 @@ class RouterService
         if (isset($this->errorHandlers[$status])) {
             return $this->errorHandlers[$status];
         }
-        if (!$this->parent) {
+        if (! $this->parent) {
             return;
         }
 
@@ -271,7 +280,8 @@ class RouterService
         //     return new Response('', $val);
         // }
 
-        return new Response((string) $val, 200);
+        $strVal= (string) $val;
+        return new Response($strVal, 200);
     }
 
     /**
@@ -309,11 +319,12 @@ class RouterService
             return new BoundRoute($this->namedRoutes[$name], $this->facade, $req, $dp);
         }
         foreach ($this->routes as $route) {
-            if (!(is_array($route) && $route[1] instanceof Router)) {
+            if (! (is_array($route) && $route[1] instanceof Router)) {
                 continue;
             }
             list($path, $router) = $route;
-            if ($route = $router->findMatchedRoute($name, $req, $prefix.$path)) {
+            $route = $router->findMatchedRoute($name, $req, $prefix.$path);
+            if ($route) {
                 return $route;
             }
         }

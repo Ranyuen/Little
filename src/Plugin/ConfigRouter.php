@@ -4,14 +4,17 @@
  *
  * @author    Ranyuen <cal_pone@ranyuen.com>
  * @author    ne_Sachirou <utakata.c4se@gmail.com>
- * @copyright 2014-2015 Ranyuen
+ * @copyright 2014-2021 Ranyuen
  * @license   http://www.gnu.org/copyleft/gpl.html GPL
  * @link      https://github.com/Ranyuen/Little
  */
+
+declare(strict_types=1);
+
 namespace Ranyuen\Little\Plugin;
 
 use Ranyuen\Little\Router;
-use Ranyuen\Little\RoutingPlugin;
+use Ranyuen\Little\RoutingPluginInterface;
 
 /**
  * Routing plugin to route by array config.
@@ -45,7 +48,7 @@ use Ranyuen\Little\RoutingPlugin;
  *         ],
  *     ]);
  */
-class ConfigRouter implements RoutingPlugin
+class ConfigRouter implements RoutingPluginInterface
 {
     /**
      * Router.
@@ -102,7 +105,7 @@ class ConfigRouter implements RoutingPlugin
                 $route->name($val['name']);
             }
             if (isset($val['assert'])) {
-                if (!is_array($val['assert'])) {
+                if (! is_array($val['assert'])) {
                     $route->assert($val['assert']);
                 } else {
                     foreach ($val['assert'] as $k => $cond) {
@@ -120,7 +123,7 @@ class ConfigRouter implements RoutingPlugin
     private function error(array $config)
     {
         foreach ($config as $status => $controller) {
-            if (!is_int($status)) {
+            if (! is_int($status)) {
                 continue;
             }
             $this->router->error($status, $controller);

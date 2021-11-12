@@ -3,15 +3,19 @@
 use Ranyuen\Little\Request;
 use Ranyuen\Little\Router;
 
-class GroupRouteTest extends PHPUnit_Framework_TestCase
+class GroupRouteTest extends \PHPUnit\Framework\TestCase
 {
     /**
      */
     public function testBasicGroup()
     {
         $child = new Router();
-        $child->get('/:id', function ($id) { return "GET $id"; });
-        $child->post('/:id', function ($id) { return "POST $id"; });
+        $child->get('/:id', function ($id) {
+            return "GET $id";
+        });
+        $child->post('/:id', function ($id) {
+            return "POST $id";
+        });
         $r = new Router();
         $r->group('/user', $child);
 
@@ -32,8 +36,12 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->group('/user', function ($r) {
-            $r->get('/:id', function ($id) { return "GET $id"; });
-            $r->post('/:id', function ($id) { return "POST $id"; });
+            $r->get('/:id', function ($id) {
+                return "GET $id";
+            });
+            $r->post('/:id', function ($id) {
+                return "POST $id";
+            });
         });
 
         $req = Request::create('/user/42');
@@ -53,14 +61,22 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
     {
         $r = new Router();
         $r->group('/member', function ($r) {
-            $r->get('/', function () { throw new Exception(); });
+            $r->get('/', function () {
+                throw new Exception();
+            });
             $r->get('/503', function ($router, $req) {
                 return $router->error(503, $req);
             });
-            $r->error(500, function () { return 'Member Error'; });
+            $r->error(500, function () {
+                return 'Member Error';
+            });
         });
-        $r->error(500, function () { return 'All 500 Error'; });
-        $r->error(503, function () { return 'All 503 Error'; });
+        $r->error(500, function () {
+            return 'All 500 Error';
+        });
+        $r->error(503, function () {
+            return 'All 503 Error';
+        });
 
         $req = Request::create('/member/');
         $res = $r->run($req);
@@ -76,7 +92,9 @@ class GroupRouteTest extends PHPUnit_Framework_TestCase
     public function testSeparateRouter()
     {
         $child = new Router();
-        $child->get('/', function () { return ''; });
+        $child->get('/', function () {
+            return '';
+        });
         $r = new Router();
         $r->group('/user', $child);
 
